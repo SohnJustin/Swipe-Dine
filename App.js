@@ -1,47 +1,22 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Pressable, Button } from "react-native";
+import * as React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import LoginScreen from "./src/pagelayout/LoginScreen";
+import SignupScreen from "./src/pagelayout/SignUpScreen";
+import WelcomeScreen from "./src/pagelayout/WelcomeScreen";
 
-export default function App({ onPress }) {
+const Stack = createNativeStackNavigator();
+
+function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Swipe&Dine</Text>
-      <Pressable style={styles.loginButton} onPress={onPress}>
-        <Text style={styles.buttonStyle}>Login</Text>
-      </Pressable>
-      <Pressable style={styles.loginButton} onPress={onPress}>
-        <Text style={styles.buttonStyle}>Signup</Text>
-      </Pressable>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Welcome">
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignupScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  sectionTitle: {
-    fontSize: 36,
-    paddingBottom: 10,
-    fontFamily: "Mohave",
-    bottom: "15%",
-  },
-  loginButton: {
-    justifyContent: "center",
-    display: "flex",
-    flexDirection: "row",
-    width: "40%",
-    margin: 20,
-    padding: 30,
-    backgroundColor: "black",
-    bottom: "10%",
-    borderRadius: 15,
-  },
-  buttonStyle: {
-    color: "white",
-    fontSize: 24,
-  },
-});
+export default App;
