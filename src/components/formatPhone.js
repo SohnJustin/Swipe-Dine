@@ -20,3 +20,8 @@ export const formatPhone = (text) => {
 
   return text;
 };
+
+export const setPhoneNumber = (text) => {
+  const formattedPhoneNumber = formatPhone(text);
+  return formattedPhoneNumber;
+};

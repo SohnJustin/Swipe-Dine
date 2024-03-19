@@ -6,11 +6,55 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { formatPhone } from "../components/formatPhone";
+import { formatPhone, setPhoneNumber } from "../components/formatPhone";
+import Auth from "../components/Auth";
+import firebase from "firebase/compat/app";
+// Required for side-effects
+import { getFirestore } from "firebase/firestore";
 
 function SignUpScreen({ navigation }) {
+  const addUserInformation = async (
+    userId,
+    { fullName: FullName, phoneNumber }
+  ) => {
+    try {
+      await firestore().collection("users").doc(userId).set(userInfo);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const [FullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const handleRegistration = async () => {
+    try {
+      // Assuming the user is already authenticated in some way and you have their UID
+      const userId = firebase.auth().currentUser.uid;
+      await addUserInformation(userId, { fullName: FName, phoneNumber });
+      navigation.navigate("Login");
+      // You can add navigation to the home screen or user dashboard here
+    } catch (error) {
+      console.error("Error during registration: ", error);
+    }
+  };
 
+  /*
+  WORRY ABOUT THIS LATER, FOR NOW JUST GET THE USER INFO
+  ------------------------------------------------------
+
+  
+  const sendVerificationCode = async (phoneNumber) => {
+    const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+    return confirmation;
+  };
+  const verifyCode = async (confirmation, verificationCode) => {
+    try {
+      await confirmation.confirm(verificationCode);
+      // User is successfully signed in
+    } catch (error) {
+      console.error("Invalid code.", error);
+    }
+  };
+*/
   const handlePhoneInput = (text) => {
     const formattedPhoneNumber = formatPhone(text);
     setPhoneNumber(formattedPhoneNumber);
@@ -25,18 +69,29 @@ function SignUpScreen({ navigation }) {
         placeholder="Phone Number: (123)-456-7890"
         keyboardType="phone-pad"
       />
+
+      <TextInput
+        style={styles.input}
+        value={FullName}
+        onChangeText={(text) => setFullName(text)}
+        placeholder="Full Name: John Doe"
+        keyboardType="default"
+      />
       <TouchableOpacity
+        method="POST"
         style={styles.button}
-        onPress={() => navigation.navigate("Login")}
+        onPress={handleRegistration}
       >
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
+
+      <Text style={styles.signInText}>Already have an account?</Text>
       <TouchableOpacity
         onPress={() =>
-          navigation.goBack()
+          navigation.navigate("Login")
         } /* include the back end here to save user info here*/
       >
-        <Text style={styles.signInText}>Already have an account? Sign In</Text>
+        Sign in!
       </TouchableOpacity>
     </View>
   );

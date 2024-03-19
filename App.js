@@ -1,12 +1,11 @@
 //Firebase Config
 // App.js
-import { firebaseConfig } from './FirebaseConfig';
-import firebase from 'firebase/app';
+// import { firebaseConfig } from "./FirebaseConfig";
+// import firebase from "firebase/app";
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-
+// if (!firebase.apps.length) {
+//   firebase.initializeApp(firebaseConfig);
+// }
 
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
