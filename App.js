@@ -1,12 +1,12 @@
 //Firebase Config
+// App.js
 import { firebaseConfig } from './FirebaseConfig';
 import firebase from 'firebase/app';
-//
 
-//Checking if not initalized instance of Firebase
-if (!firebase.getApps.length){
-  firebase.initializedApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
 }
+
 
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
