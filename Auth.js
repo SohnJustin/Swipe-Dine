@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 export default function Auth() {
   const [phoneNumber, setPhoneNumber] = useState('');
