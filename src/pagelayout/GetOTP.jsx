@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 //import auth from "@react-native-firebase/auth";
+import { auth, signInWithPhoneNumber } from "../firebase/firebase";
 
 const refCallback = (textInput) => (node) => {
   textInput.current = node;
@@ -34,18 +35,30 @@ const OTPScreen = function ({
   };
 
   useEffect(() => {
-    signInWithPhoneNumber();
-  }, []);
+    handleVerification(phoneNumber);
+  }, [phoneNumber]);
 
-  async function signInWithPhoneNumber() {
-    try {
-      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-      setConfirm(confirmation);
-    } catch (e) {
-      alert(JSON.stringify(e));
-    }
+  async function handleVerification(phoneNumber) {
+    const verifier = new RecaptchaVerifier(
+      "recaptcha-container",
+      {
+        size: "invisible",
+        callback: (response) => {
+          // reCAPTCHA solved - now you can proceed with phone number verification
+          signInWithPhoneNumber(auth, phoneNumber, verifier)
+            .then((confirmationResult) => {
+              setConfirm(confirmationResult);
+            })
+            .catch((error) => {
+              console.error("SMS not sent", error);
+            });
+        },
+      },
+      auth
+    );
+
+    verifier.verify();
   }
-
   async function confirmCode() {
     try {
       const code = otpArray.join("");

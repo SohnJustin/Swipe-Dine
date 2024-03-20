@@ -38,7 +38,8 @@ function SignUpScreen({ navigation }) {
       />
       <TextInput
         style={styles.input}
-        value={String}
+        value={fullName}
+        onChangeText={(text) => setFullName(text)}
         placeholder="John Doe"
         keyboardType="default"
       />
@@ -75,7 +76,6 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     padding: 10,
-    fontFamily: "Lato",
     width: "80%",
   },
   button: {
@@ -87,16 +87,13 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontFamily: "Lato",
   },
   signUpText: {
     marginTop: 20,
     color: "#000",
-    fontFamily: "Lato",
   },
   signUpButton: {
     color: "#0000FF", // or any color you want for the clickable text
-    fontFamily: "Lato",
     fontWeight: "bold", // optional: if you want 'Sign Up' to be bold
   },
 });

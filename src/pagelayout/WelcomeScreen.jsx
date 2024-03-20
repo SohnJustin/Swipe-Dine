@@ -23,13 +23,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 64,
-    fontFamily: "Mohave",
     marginBottom: 20,
   },
   subtitle: {
     paddingTop: 20,
     fontSize: 24,
-    fontFamily: "Lato",
     color: "gray",
   },
 });
