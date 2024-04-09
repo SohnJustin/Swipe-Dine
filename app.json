@@ -14,15 +14,6 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
-    },
     "web": {
       "favicon": "./assets/favicon.png"
     },
@@ -31,6 +22,19 @@
         "projectId": "cf07556e-8133-48d5-ac99-aae5e4729468"
       }
     },
-    "owner": "justinsohn2"
+    "owner": "justinsohn2",
+    "ios": {
+      "simulator": true,
+      "bundleIdentifier": "com.CPSC491.SwipeDine"
+    },
+    "android": {
+      "package": "com.CPSC491.SwipeDine"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/cf07556e-8133-48d5-ac99-aae5e4729468"
+    }
   }
 }
