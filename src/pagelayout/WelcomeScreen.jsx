@@ -19,14 +19,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start", // Align items to the start of the container
+    paddingTop: 60,
   },
   title: {
     fontSize: 64,
     marginBottom: 20,
   },
   subtitle: {
-    paddingTop: 20,
+    justifyContent: "center",
+    //middle of the screen
     fontSize: 24,
     color: "gray",
   },

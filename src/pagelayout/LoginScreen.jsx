@@ -9,7 +9,7 @@ import {
 import { formatPhone } from "../components/formatPhone";
 import { doSignInWithPhone } from "../firebase/auth";
 import { doSignInAnonymously } from "../firebase/auth";
-import { auth, signInAnonymously } from "../firebase/firebase";
+import { auth } from "../firebase/firebase";
 
 function LoginScreen({ navigation }) {
   //const { userLoggedIn } = useAuth();
@@ -31,7 +31,7 @@ function LoginScreen({ navigation }) {
   };
   const handleGuestLogin = async () => {
     try {
-      await signInAnonymously(auth);
+      await doSignInAnonymously(auth);
       alert("Logged in as a guest");
       navigation.navigate("Home");
     } catch (error) {
@@ -56,6 +56,13 @@ function LoginScreen({ navigation }) {
           Login
         </Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        title="Continue as Guest"
+        style={styles.button}
+        onPress={() => handleGuestLogin()}
+      >
+        <Text style={styles.buttonText}>Continue as Guest</Text>
+      </TouchableOpacity>
       <Text style={styles.signUpText}>
         Don't have an account?{" "}
         <Text
@@ -64,13 +71,6 @@ function LoginScreen({ navigation }) {
         >
           Sign Up
         </Text>
-        <TouchableOpacity
-          title="Continue as Guest"
-          style={styles.button}
-          onPress={() => handleGuestLogin()}
-        >
-          <Text style={styles.buttonText}>Continue as Guest</Text>
-        </TouchableOpacity>
       </Text>
     </View>
   );
@@ -81,7 +81,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start", // Align items to the start of the container
+    paddingTop: 60,
   },
   title: {
     fontSize: 30,
@@ -102,6 +103,7 @@ const styles = StyleSheet.create({
     width: "80%",
     borderRadius: 5,
     color: "#fff",
+    margin: 15,
   },
   buttonText: {
     color: "#fff",

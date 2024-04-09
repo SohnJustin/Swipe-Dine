@@ -1,7 +1,15 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInAnonymously, signInWithPhoneNumber } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  query,
+  getDocs,
+  doc,
+  setDoc,
+} from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,4 +31,29 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
-export { auth, app, analytics, signInAnonymously, signInWithPhoneNumber };
+// Function to add a new user to the Firestore database
+export const addUserToFirestore = async (phoneNumber, fullName) => {
+  try {
+    const docRef = await addDoc(collection(db, "users"), {
+      phoneNumber: phoneNumber,
+      fullName: fullName,
+    });
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    throw e;
+  }
+};
+
+export const signInWithPhoneNumber = async (phoneNumber) => {
+  try {
+    const confirmationResult = await auth.signInWithPhoneNumber(phoneNumber);
+    return confirmationResult;
+  } catch (error) {
+    // Handle sign-in error
+    console.error("Error signing in with phone number:", error);
+    throw error;
+  }
+};
+
+export { auth, app, analytics };

@@ -64,12 +64,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start", // Align items to the start of the container
+    paddingTop: 60,
   },
   title: {
     fontSize: 48,
-    fontFamily: "Mohave",
-    marginBottom: 20,
+    paddingBottom: 80,
+    marginBottom: 40,
   },
   input: {
     height: 40,
