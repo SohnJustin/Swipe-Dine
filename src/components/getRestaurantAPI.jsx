@@ -1,7 +1,7 @@
 import axios from "axios";
 import Config from "react-native-config";
 
-const getRestaurants = async (latitude, longiutde, radius) => {
+const getRestaurants = async (latitude, longitude, radius) => {
   const endpoint = `https://maps.googleapis.com/maps/api/place/nearbysearch/json`;
   try {
     const response = await axios.get(endpoint, {
@@ -9,14 +9,23 @@ const getRestaurants = async (latitude, longiutde, radius) => {
         location: `${latitude}, ${longitude}`,
         radius,
         type: "restaurant",
-        key: Config.GOOGLE_PLACES_API_KEY,
+        key: "AIzaSyA9nCDjZn1426m8ajb5sJUGWuDnu7DfT_Y",
       },
     });
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    const url =
+      "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=500&key=[API KEY]"; // site that doesn’t send Access-Control-*
+    fetch(proxyurl + url) // https://cors-anywhere.herokuapp.com/https://example.com
+      .then((response) => response.json())
+      .then((contents) => console.log(contents))
+      .catch(() =>
+        console.log("Can’t access " + url + " response. Blocked by browser?")
+      );
     const restaurantsWithPhotos = response.data.results.map((restaurant) => {
       const photoReference = restaurant.photos?.[0]?.photo_reference;
       const photoUrl = photoReference
-        ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=GOOGLE_PLACES_API_KEY`
-        : "URL_of_default_image";
+        ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${Config.GOOGLE_PLACES_API_KEY}`
+        : "https://via.placeholder.com/400";
       return { ...restaurant, photoUrl };
     });
     return restaurantsWithPhotos;
