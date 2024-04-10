@@ -9,7 +9,7 @@ const getRestaurants = async (latitude, longitude, radius) => {
         location: `${latitude}, ${longitude}`,
         radius,
         type: "restaurant",
-        key: "AIzaSyA9nCDjZn1426m8ajb5sJUGWuDnu7DfT_Y",
+        key: GOOGLE_PLACES_API_KEY,
       },
     });
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
