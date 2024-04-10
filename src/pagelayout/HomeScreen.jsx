@@ -5,9 +5,11 @@ import { auth } from "../firebase/firebase";
 import Swiper from "react-native-deck-swiper";
 import getRestaurants from "../components/getRestaurantAPI";
 import Geolocation from "react-native-geolocation-service";
+import SearchBar from "../components/searchBar.";
 
 const HomeScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
+  const [city, setCity] = useState("Fullerton");
   const [location, setLocation] = useState(null);
   const radius = 10000; // 10 kilometers
 
@@ -16,12 +18,13 @@ const HomeScreen = () => {
       (position) => {
         const { latitude, longitude } = position.coords;
         setLocation({ latitude, longitude });
+
         getRestaurants(latitude, longitude, radius)
           .then((data) => {
             console.log(data.results);
             setRestaurants(data.results);
           })
-          .catch((error) => console.error(error));
+          .catch((error) => console.error("Error fetching restaurants", error));
       },
       (error) => {
         console.log(error.code, error.message);
@@ -40,32 +43,48 @@ const HomeScreen = () => {
       );
     }
     return (
-      <View style={styles.card}>
-        <Image source={{ uri: restaurant.photoUrl }} style={styles.image} />
-        <View style={styles.textWrapper}>
-          <Text style={styles.text}>{restaurant.name}</Text>
+      <View style={{ backgroundColor: "white", padding: 15 }}>
+        <SearchBar cityHandler={setCity} />
+        <View style={styles.card}>
+          <Image source={{ uri: restaurant.photoUrl }} style={styles.image} />
+          <View style={styles.textWrapper}>
+            <Text style={styles.text}>{restaurant.name}</Text>
+          </View>
+          <script
+            async
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9nCDjZn1426m8ajb5sJUGWuDnu7DfT_Y&loading=async&libraries=places&callback=initMap"
+          ></script>
         </View>
       </View>
     );
   };
   return (
     <View style={styles.container}>
-      <Swiper
-        cards={restaurants}
-        renderCard={renderCard}
-        onSwiped={(cardIndex) => {
-          console.log(`Swiped card at index ${cardIndex}`);
-        }}
-        onSwipedLeft={(cardIndex) => {
-          console.log("Swiped left!");
-        }}
-        onSwipedRight={(cardIndex) => {
-          console.log("Swiped right!");
-        }}
-        cardIndex={0}
-        backgroundColor={"transparent"}
-        stackSize={3} // the number of cards to be shown in the background
-      />
+      <View style={styles.searchBarContainer}>
+        <SearchBar cityHandler={setCity} />
+      </View>
+      <View styles={styles.swiperContainer}>
+        <Swiper
+          cards={restaurants}
+          renderCard={renderCard}
+          onSwiped={(cardIndex) => {
+            console.log(`Swiped card at index ${cardIndex}`);
+          }}
+          onSwipedLeft={(cardIndex) => {
+            console.log("Swiped left!");
+          }}
+          onSwipedRight={(cardIndex) => {
+            console.log("Swiped right!");
+          }}
+          cardIndex={0}
+          backgroundColor={"transparent"}
+          stackSize={3} // the number of cards to be shown in the background
+        />
+        <script
+          async
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9nCDjZn1426m8ajb5sJUGWuDnu7DfT_Y&loading=async&libraries=places&callback=initMap"
+        ></script>
+      </View>
     </View>
   );
 };
@@ -75,10 +94,22 @@ const { width, height } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgorundColor: "#f8f8f8",
+    backgroundColor: "#f8f8f8", // Corrected typo here
+    paddingTop: 60, // Add padding at the top for the search bar
+  },
+  searchBarContainer: {
+    paddingTop: 0,
+    paddingHorizontal: 10,
+    backgroundColor: "white",
+  },
+  swiperContainer: {
+    flex: 1, // Allows swiper to take up the remaining space
+    justifyContent: "center",
+    alignItems: "center",
   },
   card: {
-    flex: 1,
+    flexGrow: 0, // Control the size of the card
+    height: height * 0.5, // Reduced height of the card
     borderRadius: 10,
     shadowRadius: 25,
     shadowColor: "#000",
@@ -89,8 +120,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    width: width * 0.9,
-    height: height * 0.7,
+    width: "100%", // Make image take full width of the card
+    height: "70%", // Adjust height as necessary
     borderRadius: 10,
   },
   textWrapper: {
