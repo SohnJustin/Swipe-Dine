@@ -6,24 +6,22 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { formatPhone } from "../components/formatPhone";
-import { doCreateUserWithPhone } from "../firebase/auth";
+import { doSignUpWithEmail } from "../firebase/auth";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 function SignUpScreen({ navigation }) {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [error, setError] = useState("");
-
-  const handlePhoneInput = (text) => {
-    const formattedPhoneNumber = formatPhone(text);
-    setPhoneNumber(formattedPhoneNumber);
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // Initialized the error state here
 
   const handleSignUp = async (e) => {
-    if (phoneNumber.length > 10) {
-      navigation.navigate("GetOTP", { phoneNumber });
-    } else {
-      alert("Please enter a valid phone number");
+    try {
+      await doSignUpWithEmail(email, password);
+      console.log("User signed up");
+      navigation.navigate("Login");
+    } catch (error) {
+      setError(error.message); // Update the error state to display the message
+      console.error("Error signing up:", error);
     }
   };
   return (
@@ -31,17 +29,19 @@ function SignUpScreen({ navigation }) {
       <Text style={styles.title}>Swipe&Dine</Text>
       <TextInput
         style={styles.input}
-        value={phoneNumber}
-        onChangeText={handlePhoneInput}
-        placeholder="Phone Number: (123)-456-7890"
-        keyboardType="phone-pad"
+        value={email}
+        onChangeText={setEmail}
+        placeholder="johndoe@email.com"
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
-        value={fullName}
-        onChangeText={(text) => setFullName(text)}
-        placeholder="John Doe"
+        value={password}
+        onChangeText={setPassword}
+        placeholder="password"
         keyboardType="default"
+        secureTextEntry={true}
       />
       <TouchableOpacity style={styles.button} onPress={() => handleSignUp()}>
         <Text style={styles.buttonText}>Register</Text>

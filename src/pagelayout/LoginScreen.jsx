@@ -6,15 +6,15 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { formatPhone } from "../components/formatPhone";
-import { doSignInWithPhone } from "../firebase/auth";
 import { doSignInAnonymously } from "../firebase/auth";
 import { auth } from "../firebase/firebase";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 function LoginScreen({ navigation }) {
   //const { userLoggedIn } = useAuth();
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handlePhoneInput = (text) => {
@@ -22,11 +22,22 @@ function LoginScreen({ navigation }) {
     setPhoneNumber(formattedPhoneNumber);
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async () => {
     if (!isSigningIn) {
       setIsSigningIn(true);
-      await doSignInWithPhone(phoneNumber);
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        // Handle successful sign-in
+        navigation.navigate("Home"); // Make sure 'HomeScreen' is the correct name in your navigator
+        setIsSigningIn(false);
+      } catch (error) {
+        setError(error.message);
+        setIsSigningIn(false);
+      }
     }
   };
   const handleGuestLogin = async () => {
@@ -46,15 +57,22 @@ function LoginScreen({ navigation }) {
       <Text style={styles.title}>Swipe&Dine</Text>
       <TextInput
         style={styles.input}
-        value={phoneNumber}
-        onChangeText={handlePhoneInput}
-        placeholder="(123) 456-7890"
-        keyboardType="number-pad"
+        value={email}
+        onChangeText={setEmail}
+        placeholder="Email"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
       />
-      <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
-        <Text method="onSubmit" style={styles.buttonText}>
-          Login
-        </Text>
+      <TextInput
+        style={styles.input}
+        value={password}
+        onChangeText={setPassword}
+        placeholder="Password"
+        secureTextEntry
+      />
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       <TouchableOpacity
         title="Continue as Guest"
