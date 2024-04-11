@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
+import { getAuth, signInAnonymously } from "firebase/auth";
 import {
   getFirestore,
   collection,
@@ -43,17 +43,6 @@ export const addUserToFirestore = async (phoneNumber, fullName) => {
   } catch (e) {
     console.error("Error adding document: ", e);
     throw e;
-  }
-};
-
-export const signInWithPhoneNumber = async (phoneNumber) => {
-  try {
-    const confirmationResult = await auth.signInWithPhoneNumber(phoneNumber);
-    return confirmationResult;
-  } catch (error) {
-    // Handle sign-in error
-    console.error("Error signing in with phone number:", error);
-    throw error;
   }
 };
 
