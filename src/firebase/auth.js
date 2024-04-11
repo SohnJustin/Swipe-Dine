@@ -4,8 +4,17 @@ import {
   signInAnonymously,
 } from "firebase/auth";
 
-export const doSignInAnonymously = async (auth) => {
-  return signInAnonymously(auth);
+export const doSignInAnonymously = async () => {
+  const auth = getAuth();
+  try {
+    const userCredential = await signInAnonymously(auth);
+    const user = userCredential.user;
+    console.log("User signed in anonymously:", user.uid);
+    // Additional logic after successful sign-in
+  } catch (error) {
+    console.error("Error signing in anonymously:", error.message);
+    // Handle errors (e.g., show an error message)
+  }
 };
 export const doSignUpWithEmail = async (email, password) => {
   const auth = getAuth();
