@@ -10,6 +10,7 @@ import {
   doc,
   setDoc,
 } from "firebase/firestore";
+import { FIREBASE_API_KEY } from "@env";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -17,7 +18,7 @@ import {
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDIOlj1nEEwxrakzMayAUJtUooSSVIJvh0",
+  apiKey: FIREBASE_API_KEY,
   authDomain: "swipedine-7e5a2.firebaseapp.com",
   databaseURL: "https://swipedine-7e5a2-default-rtdb.firebaseio.com",
   projectId: "swipedine-7e5a2",
@@ -33,11 +34,11 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
 // Function to add a new user to the Firestore database
-export const addUserToFirestore = async (phoneNumber, fullName) => {
+export const addUserToFirestore = async (email, password) => {
   try {
     const docRef = await addDoc(collection(db, "users"), {
-      phoneNumber: phoneNumber,
-      fullName: fullName,
+      email: email,
+      password: password,
     });
     console.log("Document written with ID: ", docRef.id);
   } catch (e) {

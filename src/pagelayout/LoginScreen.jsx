@@ -17,11 +17,6 @@ function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handlePhoneInput = (text) => {
-    const formattedPhoneNumber = formatPhone(text);
-    setPhoneNumber(formattedPhoneNumber);
-  };
-
   const handleLogin = async () => {
     if (!isSigningIn) {
       setIsSigningIn(true);
@@ -31,6 +26,7 @@ function LoginScreen({ navigation }) {
           email,
           password
         );
+        console.log("User signed in:", userCredential.user.uid);
         // Handle successful sign-in
         navigation.navigate("Home"); // Make sure 'HomeScreen' is the correct name in your navigator
         setIsSigningIn(false);
@@ -60,7 +56,7 @@ function LoginScreen({ navigation }) {
         value={email}
         onChangeText={setEmail}
         placeholder="Email"
-        keyboardType="email-address"
+        inputMode="email-address"
         autoCapitalize="none"
         autoCorrect={false}
       />

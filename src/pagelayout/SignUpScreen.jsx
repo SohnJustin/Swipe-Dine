@@ -32,7 +32,7 @@ function SignUpScreen({ navigation }) {
         value={email}
         onChangeText={setEmail}
         placeholder="johndoe@email.com"
-        keyboardType="email-address"
+        inputMode="email-address"
         autoCapitalize="none"
       />
       <TextInput
@@ -40,7 +40,7 @@ function SignUpScreen({ navigation }) {
         value={password}
         onChangeText={setPassword}
         placeholder="password"
-        keyboardType="default"
+        inputMode="default"
         secureTextEntry={true}
       />
       <TouchableOpacity style={styles.button} onPress={() => handleSignUp()}>
