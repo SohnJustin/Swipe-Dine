@@ -3,18 +3,39 @@ import { View, Text } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { GOOGLE_PLACES_API_KEY } from "@env";
+import axios from "axios";
+
+const FIREBASE_FUNCTION_URL = `https://us-central1-swipedine-7e5a2.cloudfunctions.net/fetchDataFromYelp`;
 
 export default function SearchBar({ cityHandler }) {
+  const fetchData = async (searchInput) => {
+    try {
+      const response = await axios.get(
+        `${FIREBASE_FUNCTION_URL}?city=${searchInput}`
+      );
+      console.log(response.data);
+      cityHandler(response.data); // Replace with appropriate handling
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   return (
     <View style={{ marginTop: 15, flexDirection: "row" }}>
       <GooglePlacesAutocomplete
-        query={{ key: "AIzaSyA9nCDjZn1426m8ajb5sJUGWuDnu7DfT_Y" }}
-        onPress={(data, details = null) => {
-          console.log(data.description);
-          const city = data.description.split(",")[0];
-          cityHandler(city);
+        placeholder="Search..."
+        query={{
+          key: GOOGLE_PLACES_API_KEY,
+          language: "en",
+          types: "(cities)",
         }}
-        placeholder="Search"
+        onPress={(data, details = null) => {
+          console.log(data, details);
+          cityHandler(data.description);
+          fetchData(data.description); // Call fetchData with the city name
+        }}
+        onFail={(error) => console.error(error)}
         styles={{
           textInput: {
             backgroundColor: "#eee",
