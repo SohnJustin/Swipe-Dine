@@ -15,7 +15,7 @@ export default function SearchBar({ cityHandler }) {
         `${FIREBASE_FUNCTION_URL}?city=${searchInput}`
       );
       console.log(response.data);
-      cityHandler(response.data); // Replace with appropriate handling
+      cityHandler(data.description); // Replace with appropriate handling
     } catch (error) {
       console.error("Error fetching data:", error);
     }

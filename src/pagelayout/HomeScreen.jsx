@@ -6,24 +6,35 @@ import Swiper from "react-native-deck-swiper";
 import SearchBar from "../components/searchBar.";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase";
-import { GOOGLE_PLACES_API_KEY, YELP_API_KEY } from "@env";
+import { YELP_API_KEY } from "@env";
 import { localRestaurants } from "../components/localRestaurant";
+import axios from "axios";
 
 const HomeScreen = () => {
-  const [restaurants, setRestaurants] = useState(localRestaurants);
+  const [restaurants, setRestaurants] = useState([]);
   const [city, setCity] = useState("Fullerton");
 
   const getRestaurantFromYelp = async () => {
     try {
-      const yelpUrl = `https://api.yelp.com/v3/businesses/search?term=restaurants&location=${city}`;
-      const reponse = await axios.get(yelpUrl, {
+      const yelpUrl = `https://api.yelp.com/v3/businesses/search?location=${city}`;
+      const response = await axios.get(yelpUrl, {
         headers: {
           Authorization: `Bearer ${YELP_API_KEY}`,
         },
       });
-      setRestaurants(reponse.data.business);
+
+      if (response.data && response.data.businesses) {
+        setRestaurants(response.data.businesses);
+      } else {
+        // Handle the case where 'businesses' is not a property
+        console.error(
+          'Yelp API response does not contain "businesses" property'
+        );
+        setRestaurants([]); // Reset the restaurants state to an empty array
+      }
     } catch (error) {
-      console.error("Error fetching data from yelp", error);
+      console.error("Error fetching data from Yelp:", error);
+      setRestaurants([]); // Reset the restaurants state to an empty array in case of an error
     }
   };
 
@@ -131,7 +142,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%", // Make image take full width of the card
-    height: "70%", // Adjust height as necessary
+    height: "100%", // Adjust height as necessary
     borderRadius: 10,
   },
   textWrapper: {
