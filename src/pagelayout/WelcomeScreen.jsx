@@ -1,16 +1,42 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
+import { DateTimePicker } from "@react-native-community/datetimepicker";
 
 function WelcomeScreen({ navigation }) {
+  const [isTimePickerVisible, setTimePickerVisible] = useState(false);
+  const [date, setDate] = useState(new Date());
+
+  const handleTimePickerConfirm = (selectedDate) => {
+    setTimePickerVisible(false);
+    setDate(selectedDate);
+  };
+  const showTimePicker = () => {
+    setTimePickerVisible(true);
+  };
+
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => navigation.navigate("Login")}
-      activeOpacity={0.7} // This makes the touch seem more responsive
-    >
+    <View style={styles.container}>
       <Text style={styles.title}>Swipe&Dine</Text>
-      <Text style={styles.subtitle}>Tap anywhere to continue</Text>
-    </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Login")}
+        activeOpacity={0.7}
+        style={styles.touchableArea}
+      >
+        <Text style={styles.subtitle}>
+          Click Here to Bypass Reversation Time
+        </Text>
+      </TouchableOpacity>
+      <Button title="Select a Reservation Time" onPress={showTimePicker} />
+      {isTimePickerVisible && (
+        <DateTimePicker
+          value={date}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={handleTimePickerConfirm}
+        />
+      )}
+    </View>
   );
 }
 
@@ -28,9 +54,14 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     justifyContent: "center",
+    textAlign: "center",
     //middle of the screen
     fontSize: 24,
     color: "gray",
+    padding: 20,
+    borderRadius: 10,
+    borderColor: "gray",
+    borderWidth: 1,
   },
 });
 
