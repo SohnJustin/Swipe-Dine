@@ -5,35 +5,43 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from "react-native";
-import { doSignInAnonymously } from "../firebase/auth";
 import { auth } from "../firebase/firebase";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  doSignInAnonymously,
+} from "firebase/auth";
 
 function LoginScreen({ navigation }) {
-  //const { userLoggedIn } = useAuth();
-  const [isSigningIn, setIsSigningIn] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
-    if (!isSigningIn) {
-      setIsSigningIn(true);
-      try {
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        console.log("User signed in:", userCredential.user.uid);
-        // Handle successful sign-in
-        navigation.navigate("Home"); // Make sure 'HomeScreen' is the correct name in your navigator
-        setIsSigningIn(false);
-      } catch (error) {
-        setError(error.message);
-        setIsSigningIn(false);
+    if (email.trim() === "" || password.trim() === "") {
+      Alert.alert("Missing Fields", "Both email and password are required.");
+      return;
+    }
+    try {
+      const auth = getAuth();
+      await signInWithEmailAndPassword(auth, email, password);
+      navigation.navigate("Home"); // Make sure 'HomeScreen' is the correct name in your navigator
+    } catch (error) {
+      let errorMessage = "Failed to log in. Please try again.";
+      if (error.code === "auth/invalid-email") {
+        errorMessage = "The email address is not valid.";
+      } else if (error.code === "auth/user-disabled") {
+        errorMessage =
+          "The user corresponding to the given email has been disabled.";
+      } else if (
+        error.code === "auth/user-not-found" ||
+        error.code === "auth/wrong-password"
+      ) {
+        errorMessage = "Incorrect email or password.";
       }
+      Alert.alert("Login Error", errorMessage);
     }
   };
   const handleGuestLogin = async () => {
@@ -95,7 +103,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "flex-start", // Align items to the start of the container
+    justifyContent: "flex-start",
     paddingTop: 60,
   },
   title: {
