@@ -1,19 +1,34 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
-import { DateTimePicker } from "@react-native-community/datetimepicker";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Platform } from "react-native";
 
 function WelcomeScreen({ navigation }) {
-  const [isTimePickerVisible, setTimePickerVisible] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(Platform.OS === "ios");
+  const [showTimePicker, setShowTimePicker] = useState(Platform.OS === "ios");
 
-  const handleTimePickerConfirm = (selectedDate) => {
-    setTimePickerVisible(false);
-    setDate(selectedDate);
-  };
-  const showTimePicker = () => {
-    setTimePickerVisible(true);
+  const handleDateChange = (event, newDate) => {
+    const currentDate = newDate || selectedDate;
+    setSelectedDate(currentDate);
+    if (Platform.OS === "android") {
+      setShowDatePicker(false);
+    }
   };
 
+  const handleTimeChange = (event, newTime) => {
+    const currentTime = newTime || selectedDate;
+    setSelectedDate(currentTime);
+    if (Platform.OS === "android") {
+      setShowTimePicker(false);
+    }
+  };
+
+  const handleReservationConfirm = () => {
+    // handle the reservation confirmation here later
+    console.log("Reservation confirmed for:", selectedDate);
+    navigation.navigate("Login");
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Swipe&Dine</Text>
@@ -23,29 +38,74 @@ function WelcomeScreen({ navigation }) {
         style={styles.touchableArea}
       >
         <Text style={styles.subtitle}>
-          Click Here to Bypass Reversation Time
+          Click Here to Bypass Reservation Time
         </Text>
       </TouchableOpacity>
-      <Button title="Select a Reservation Time" onPress={showTimePicker} />
-      {isTimePickerVisible && (
+
+      {Platform.OS === "android" && (
+        <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
+      )}
+
+      {(showDatePicker || Platform.OS === "ios") && (
         <DateTimePicker
-          value={date}
-          mode="time"
-          is24Hour={true}
+          style={styles.datePicker}
+          value={selectedDate}
+          mode="date"
           display="default"
-          onChange={handleTimePickerConfirm}
+          onChange={handleDateChange}
         />
       )}
+
+      {Platform.OS === "android" && (
+        <Button title="Select Time" onPress={() => setShowTimePicker(true)} />
+      )}
+
+      {(showTimePicker || Platform.OS === "ios") && (
+        <DateTimePicker
+          value={selectedDate}
+          mode="time"
+          display="default"
+          onChange={handleTimeChange}
+          style={styles.timePicker}
+        />
+      )}
+
+      <Button
+        title="Confirm Reservation"
+        onPress={handleReservationConfirm}
+        style={styles.datecontainer}
+      />
     </View>
   );
 }
-
 const styles = StyleSheet.create({
+  datePicker: {
+    width: "30%", // Take up full container width
+    justifyContent: "center",
+    alignContent: "center",
+    marginTop: 20,
+
+    // You may adjust the height as needed or leave it to auto scale based on the content
+  },
+  timePicker: {
+    marginTop: 20,
+    width: "20%", // Take up full container width
+    justifyContent: "center",
+    alignContent: "center",
+  },
+  datecontainer: {
+    flex: 0,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "space-around",
+
+    transform: [{ scale: 1.5 }],
+  },
   container: {
     flex: 1,
     backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "flex-start", // Align items to the start of the container
+    justifyContent: "flex-start",
     paddingTop: 60,
   },
   title: {
@@ -55,7 +115,6 @@ const styles = StyleSheet.create({
   subtitle: {
     justifyContent: "center",
     textAlign: "center",
-    //middle of the screen
     fontSize: 24,
     color: "gray",
     padding: 20,
