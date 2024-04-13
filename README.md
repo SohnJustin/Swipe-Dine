@@ -54,6 +54,8 @@ To run the Swipe-Dine app on your local machine, follow these steps:
 
     ```bash
     npm start
+    or
+    npx expo start
     ```
 
 5. Open the Expo Go app on your mobile device.
