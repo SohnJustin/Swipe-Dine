@@ -35,7 +35,7 @@ To run the Swipe-Dine app on your local machine, follow these steps:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/Swipe-Dine.git
+    git clone https://github.com/SohnJustin/Swipe-Dine.git
     ```
 
 2. Navigate to the project directory:
