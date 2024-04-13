@@ -5,14 +5,14 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { GOOGLE_PLACES_API_KEY } from "@env";
 import axios from "axios";
+import Entypo from "react-native-vector-icons/Entypo";
 
 const FIREBASE_FUNCTION_URL = `https://us-central1-swipedine-7e5a2.cloudfunctions.net/fetchDataFromYelp`;
-
 export default function SearchBar({ cityHandler }) {
   const fetchData = async (searchInput) => {
     try {
       const response = await axios.get(
-        `${FIREBASE_FUNCTION_URL}?city=${searchInput}`
+        `${FIREBASE_FUNCTION_URL}?city=${encodeURIComponent(searchInput)}`
       );
       console.log(response.data);
       cityHandler(data.description); // Replace with appropriate handling
@@ -63,16 +63,11 @@ export default function SearchBar({ cityHandler }) {
               marginRight: 8,
               backgroundColor: "white",
               padding: 9,
-              borderRadius: 30,
+              borderRadius: 40,
               alignItems: "center",
             }}
           >
-            <AntDesign
-              name="clockcircle"
-              size={11}
-              style={{ marginRight: 6 }}
-            />
-            <Text>Search</Text>
+            <Entypo name="magnifying-glass" />
           </View>
         )}
       />

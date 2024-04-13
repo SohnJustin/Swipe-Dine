@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
 import Swiper from "react-native-deck-swiper";
-// import Geolocation from "react-native-geolocation-service";
-import SearchBar from "../pageLayout/searchBar";
+import SearchBar from "../components/searchBar.";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { YELP_API_KEY } from "@env";
-import { localRestaurants } from "../components/localRestaurant";
 import axios from "axios";
-
-const HomeScreen = () => {
+const HomeScreenContent = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [city, setCity] = useState("Fullerton");
 
@@ -25,15 +22,14 @@ const HomeScreen = () => {
       if (response.data && response.data.businesses) {
         setRestaurants(response.data.businesses);
       } else {
-        // Handle the case where 'businesses' is not a property
         console.error(
           'Yelp API response does not contain "businesses" property'
         );
-        setRestaurants([]); // Reset the restaurants state to an empty array
+        setRestaurants([]);
       }
     } catch (error) {
       console.error("Error fetching data from Yelp:", error);
-      setRestaurants([]); // Reset the restaurants state to an empty array in case of an error
+      setRestaurants([]);
     }
   };
 
@@ -56,7 +52,6 @@ const HomeScreen = () => {
   }, [city]);
 
   const renderCard = (restaurant) => {
-    // check if restaurant and photourl are defined
     if (!restaurant || !restaurant.image_url) {
       return (
         <View style={styles.card}>
@@ -64,6 +59,7 @@ const HomeScreen = () => {
         </View>
       );
     }
+    const categories = restaurant.categories.map((category) => category.title);
     return (
       <View style={styles.card}>
         <Image source={{ uri: restaurant.image_url }} style={styles.image} />
@@ -74,36 +70,34 @@ const HomeScreen = () => {
           </Text>
           <Text style={styles.subtitle}>Price: {restaurant.price}</Text>
           <Text style={styles.subtitle}>
-            Categories: {restaurant.categories.join(", ")}
+            Categories: {categories.join(", ")}
           </Text>
         </View>
       </View>
     );
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.searchBarContainer}>
         <SearchBar cityHandler={setCity} />
       </View>
-      <View styles={styles.swiperContainer}>
+      <View style={styles.swiperContainer}>
         <Swiper
           cards={restaurants}
           renderCard={renderCard}
           onSwiped={(cardIndex) => {
             console.log(`Swiped card at index ${cardIndex}`);
-            //console.log(GOOGLE_PLACES_API_KEY);
           }}
           onSwipedLeft={(cardIndex) => {
             console.log("Swiped left!");
-            //console.log(YELP_API_KEY);
           }}
           onSwipedRight={(cardIndex) => {
             console.log("Swiped right!");
-            //console.log(GOOGLE_PLACES_API_KEY);
           }}
           cardIndex={0}
           backgroundColor={"transparent"}
-          stackSize={3} // the number of cards to be shown in the background
+          stackSize={3}
         />
       </View>
     </View>
@@ -123,13 +117,13 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   swiperContainer: {
-    flex: 1, // Allows swiper to take up the remaining space
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   card: {
-    flexGrow: 0, // Control the size of the card
-    height: height * 0.5, // Reduced height of the card
+    flexGrow: 0,
+    height: "70%",
     borderRadius: 10,
     shadowRadius: 25,
     shadowColor: "#000",
@@ -140,8 +134,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    width: "100%", // Make image take full width of the card
-    height: "100%", // Adjust height as necessary
+    width: "100%",
+    height: "100%",
     borderRadius: 10,
   },
   textWrapper: {
@@ -158,7 +152,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
-  // ... Add styles for any additional elements like buttons or ratings
+  subtitle: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
 
-export default HomeScreen;
+export default HomeScreenContent;

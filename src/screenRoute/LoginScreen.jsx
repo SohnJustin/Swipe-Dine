@@ -64,7 +64,6 @@ function LoginScreen({ navigation }) {
         value={email}
         onChangeText={setEmail}
         placeholder="Email"
-        inputMode="email-address"
         autoCapitalize="none"
         autoCorrect={false}
       />
