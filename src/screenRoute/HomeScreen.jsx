@@ -6,9 +6,13 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { YELP_API_KEY } from "@env";
 import axios from "axios";
+import { useRoute } from "@react-navigation/native";
+
 function HomeScreen() {
   const [restaurants, setRestaurants] = useState([]);
   const [city, setCity] = useState("Fullerton");
+  const route = useRoute();
+  const [selectedTime, setSelectedTime] = useState(new Date());
 
   const getRestaurantFromYelp = async () => {
     try {
@@ -49,7 +53,10 @@ function HomeScreen() {
   useEffect(() => {
     getRestaurantFromYelp();
     handleSearch(city);
-  }, [city]);
+    if (route.params && route.params.selectedTime) {
+      setSelectedTime(route.params.selectedTime);
+    }
+  }, [city, route.params?.selectedTime]);
 
   const renderCard = (restaurant) => {
     if (!restaurant || !restaurant.image_url) {
@@ -62,6 +69,7 @@ function HomeScreen() {
     const categories = restaurant.categories.map((category) => category.title);
     return (
       <View style={styles.card}>
+        <Text>Selected Time: {selectedTime.toString()}</Text>
         <Image source={{ uri: restaurant.image_url }} style={styles.image} />
         <View style={styles.textWrapper}>
           <Text style={styles.text}>{restaurant.name}</Text>

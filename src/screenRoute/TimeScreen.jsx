@@ -30,7 +30,10 @@ function TimeScreen({ navigation }) {
     // handle the reservation confirmation here later
     // console.log("Reservation confirmed for:", selectedDate);
     console.log("Time sent to HomeScreen:", selectedDate);
-    navigation.navigate("Home", { selectedTime: selectedDate });
+    navigation.navigate("Main", {
+      screen: "Home",
+      params: { selectedTime: selectedDate },
+    });
   };
   return (
     <View style={styles.container}>
