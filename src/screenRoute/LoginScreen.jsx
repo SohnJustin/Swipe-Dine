@@ -27,7 +27,7 @@ function LoginScreen({ navigation }) {
     try {
       const auth = getAuth();
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate("Home"); // Make sure 'HomeScreen' is the correct name in your navigator
+      navigation.navigate("Time");
     } catch (error) {
       let errorMessage = "Failed to log in. Please try again.";
       if (error.code === "auth/invalid-email") {
@@ -48,7 +48,7 @@ function LoginScreen({ navigation }) {
     try {
       await doSignInAnonymously(auth);
       alert("Logged in as a guest");
-      navigation.navigate("Home");
+      navigation.navigate("Time");
     } catch (error) {
       console.error(error);
       alert("Error logging in as a guest");

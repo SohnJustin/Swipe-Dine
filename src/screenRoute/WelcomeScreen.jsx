@@ -1,105 +1,25 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { Platform } from "react-native";
 
 function WelcomeScreen({ navigation }) {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(Platform.OS === "ios");
-  const [showTimePicker, setShowTimePicker] = useState(Platform.OS === "ios");
-
-  const handleDateChange = (event, newDate) => {
-    const currentDate = newDate || selectedDate;
-    setSelectedDate(currentDate);
-    if (Platform.OS === "android") {
-      setShowDatePicker(false);
-    }
-  };
-
-  const handleTimeChange = (event, newTime) => {
-    const currentTime = newTime || selectedDate;
-    setSelectedDate(currentTime);
-    if (Platform.OS === "android") {
-      setShowTimePicker(false);
-    }
-  };
-
-  const handleReservationConfirm = () => {
-    // handle the reservation confirmation here later
-    console.log("Reservation confirmed for:", selectedDate);
-    navigation.navigate("Login");
-  };
   return (
     <View style={styles.container}>
+      <Text style={styles.text}>Welcome to</Text>
       <Text style={styles.title}>Swipe&Dine</Text>
       <TouchableOpacity
         onPress={() => navigation.navigate("Login")}
         activeOpacity={0.7}
         style={styles.touchableArea}
       >
-        <Text style={styles.subtitle}>
-          Click Here to Bypass Reservation Time
-        </Text>
+        <Text style={styles.subtitle}>Press here to login!</Text>
       </TouchableOpacity>
-
-      {Platform.OS === "android" && (
-        <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
-      )}
-
-      {(showDatePicker || Platform.OS === "ios") && (
-        <DateTimePicker
-          style={styles.datePicker}
-          value={selectedDate}
-          mode="date"
-          display="default"
-          onChange={handleDateChange}
-        />
-      )}
-
-      {Platform.OS === "android" && (
-        <Button title="Select Time" onPress={() => setShowTimePicker(true)} />
-      )}
-
-      {(showTimePicker || Platform.OS === "ios") && (
-        <DateTimePicker
-          value={selectedDate}
-          mode="time"
-          display="default"
-          onChange={handleTimeChange}
-          style={styles.timePicker}
-        />
-      )}
-
-      <Button
-        title="Confirm Reservation"
-        onPress={handleReservationConfirm}
-        style={styles.datecontainer}
-      />
     </View>
   );
 }
 const styles = StyleSheet.create({
-  datePicker: {
-    width: "30%", // Take up full container width
-    justifyContent: "center",
-    alignContent: "center",
-    marginTop: 20,
-
-    // You may adjust the height as needed or leave it to auto scale based on the content
-  },
-  timePicker: {
-    marginTop: 20,
-    width: "20%", // Take up full container width
-    justifyContent: "center",
-    alignContent: "center",
-  },
-  datecontainer: {
-    flex: 0,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "space-around",
-
-    transform: [{ scale: 1.5 }],
+  text: {
+    color: "black",
+    fontSize: 20,
   },
   container: {
     flex: 1,
