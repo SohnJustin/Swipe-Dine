@@ -36,6 +36,8 @@ yarn-error.*
 *.tsbuildinfo
 
 .history
-ios
-android
 .github
+
+# misc
+android/
+ios/
