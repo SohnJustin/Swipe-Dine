@@ -6,7 +6,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { YELP_API_KEY } from "@env";
 import axios from "axios";
-const HomeScreen = () => {
+function HomeScreen() {
   const [restaurants, setRestaurants] = useState([]);
   const [city, setCity] = useState("Fullerton");
 
@@ -102,7 +102,7 @@ const HomeScreen = () => {
       </View>
     </View>
   );
-};
+}
 
 const { width, height } = Dimensions.get("window");
 
