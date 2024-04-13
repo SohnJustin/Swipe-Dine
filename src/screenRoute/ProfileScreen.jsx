@@ -1,7 +1,7 @@
-import React from "react";
+import { Text } from "react-native";
 
 function ProfileScreen() {
-  return <div>ProfileScreen</div>;
+  return <Text>ProfileScreen</Text>;
 }
 
 export default ProfileScreen;
