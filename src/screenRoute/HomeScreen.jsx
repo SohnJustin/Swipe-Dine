@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
 import Swiper from "react-native-deck-swiper";
-import SearchBar from "../components/searchBar.";
+import SearchBar from "../pageLayout/searchBar";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { YELP_API_KEY } from "@env";
 import axios from "axios";
-const HomeScreenContent = () => {
+const HomeScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [city, setCity] = useState("Fullerton");
 
@@ -159,4 +159,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreenContent;
+export default HomeScreen;
