@@ -2,15 +2,23 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import SearchBar from "../pageLayout/searchBar";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  query,
+  where,
+  getDocs,
+  setDoc,
+} from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { YELP_API_KEY } from "@env";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
+import { addLikedRestaurant } from "../firebase/dbOperations";
 
 function HomeScreen() {
   const [restaurants, setRestaurants] = useState([]);
-  const [city, setCity] = useState("Fullerton");
+  const [city, setCity] = useState(`Fullerton, CA`);
   const route = useRoute();
   const [selectedTime, setSelectedTime] = useState(new Date());
 
@@ -36,7 +44,6 @@ function HomeScreen() {
       setRestaurants([]);
     }
   };
-
   const handleSearch = async (searchInput) => {
     const q = query(
       collection(db, "restaurants"),
@@ -58,6 +65,31 @@ function HomeScreen() {
     }
   }, [city, route.params?.selectedTime]);
 
+  const onSwipedRight = async (cardIndex) => {
+    const likedRestaurant = restaurants[cardIndex];
+    const restaurantData = {
+      name: likedRestaurant.name,
+      rating: likedRestaurant.rating, // Assume 'rating' is available in Yelp's response
+      address: likedRestaurant.location.address1, // Check Yelp's API response structure
+      yelp_id: likedRestaurant.id,
+      image_url: likedRestaurant.image_url,
+    };
+    console.log("Swiped right on: ", likedRestaurant);
+    addLikedRestaurant(restaurantData);
+    // Construct a new document in the "likedRestaurants" collection with the restaurant data
+    // try {
+    //   await setDoc(doc(db, "user", "userId", likedRestaurant.id), {
+    //     name: likedRestaurant.name,
+    //     image_url: likedRestaurant.image_url,
+    //     categories: likedRestaurant.categories.map((cat) => cat.title), // assuming categories is an array of objects
+    //     location: likedRestaurant.location.address1, // adjust according to Yelp's response
+    //     yelp_id: likedRestaurant.id, // store Yelp's unique ID for reference
+    //   });
+    //   console.log("Restaurant successfully saved to likes!");
+    // } catch (error) {
+    //   console.error("Error saving liked restaurant: ", error);
+    // }
+  };
   const renderCard = (restaurant) => {
     if (!restaurant || !restaurant.image_url) {
       return (
@@ -100,9 +132,7 @@ function HomeScreen() {
           onSwipedLeft={(cardIndex) => {
             console.log("Swiped left!");
           }}
-          onSwipedRight={(cardIndex) => {
-            console.log("Swiped right!");
-          }}
+          onSwipedRight={onSwipedRight}
           cardIndex={0}
           backgroundColor={"transparent"}
           stackSize={3}

@@ -32,7 +32,7 @@ function TimeScreen({ navigation }) {
     console.log("Time sent to HomeScreen:", selectedDate);
     navigation.navigate("Main", {
       screen: "Home",
-      params: { selectedTime: selectedDate },
+      params: { selectedTime: selectedDate.toISOString() },
     });
   };
   return (
