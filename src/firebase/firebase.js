@@ -1,16 +1,10 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
-import {
-  getFirestore,
-  collection,
-  query,
-  getDocs,
-  doc,
-  setDoc,
-} from "firebase/firestore";
+import { getAnalytics, isSupported } from "firebase/analytics";
+import { initializeAuth, getReactNativePersistence } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { FIREBASE_API_KEY } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -30,21 +24,25 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app);
+// const analytics = getAnalytics(app);
+const db = getFirestore(app);
 
-// Function to add a new user to the Firestore database
-export const addUserToFirestore = async (email, password) => {
-  try {
-    const docRef = await addDoc(collection(db, "users"), {
-      email: email,
-      password: password,
-    });
-    console.log("Document written with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-    throw e;
-  }
-};
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
 
-export { auth, app, analytics };
+// Check if Analytics is supported
+isSupported()
+  .then((supported) => {
+    if (supported) {
+      const analytics = getAnalytics(app);
+      console.log("Firebase Analytics initialized.");
+    } else {
+      console.log("Firebase Analytics is not supported in this environment.");
+    }
+  })
+  .catch((error) => {
+    console.error("Error checking analytics support:", error);
+  });
+
+export { auth, app, db };
