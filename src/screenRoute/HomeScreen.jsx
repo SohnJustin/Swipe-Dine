@@ -19,8 +19,8 @@ import { addLikedRestaurant } from "../firebase/dbOperations";
 function HomeScreen() {
   const [restaurants, setRestaurants] = useState([]);
   const [city, setCity] = useState(`Fullerton, CA`);
-  const route = useRoute();
   const [selectedTime, setSelectedTime] = useState(new Date());
+  const route = useRoute();
 
   const getRestaurantFromYelp = async () => {
     try {
@@ -60,8 +60,9 @@ function HomeScreen() {
   useEffect(() => {
     getRestaurantFromYelp();
     handleSearch(city);
-    if (route.params && route.params.selectedTime) {
-      setSelectedTime(route.params.selectedTime);
+    if (route.params?.selectedTime) {
+      const timeFromPicker = new Date(route.params.selectedTime);
+      setSelectedTime(timeFromPicker);
     }
   }, [city, route.params?.selectedTime]);
 
@@ -71,6 +72,7 @@ function HomeScreen() {
       name: likedRestaurant.name,
       rating: likedRestaurant.rating, // Assume 'rating' is available in Yelp's response
       address: likedRestaurant.location.address1, // Check Yelp's API response structure
+      categories: likedRestaurant.categories,
       yelp_id: likedRestaurant.id,
       image_url: likedRestaurant.image_url,
     };

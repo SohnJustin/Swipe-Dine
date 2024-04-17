@@ -20,6 +20,7 @@ function TimeScreen({ navigation }) {
 
   const handleTimeChange = (event, newTime) => {
     const currentTime = newTime || selectedDate;
+    console.log("Time selected:", currentTime);
     setSelectedDate(currentTime);
     if (Platform.OS === "android") {
       setShowTimePicker(false);
