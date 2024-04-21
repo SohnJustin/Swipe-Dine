@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Platform } from "react-native";
+import { useTime } from "../components/timeContext";
 
 function TimeScreen({ navigation }) {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const { selectedDate, setSelectedDate } = useTime();
+  const { selectedTime, setSelectedTime } = useTime();
+
   const [showDatePicker, setShowDatePicker] = useState(Platform.OS === "ios");
   const [showTimePicker, setShowTimePicker] = useState(Platform.OS === "ios");
 
@@ -19,21 +22,20 @@ function TimeScreen({ navigation }) {
   //};
 
   const handleTimeChange = (event, newTime) => {
-    const currentTime = newTime || selectedDate;
-    console.log("Time selected:", currentTime);
-    setSelectedDate(currentTime);
+    const currentTime = newTime || selectedTime;
+    setSelectedTime(currentTime); // Set new time
     if (Platform.OS === "android") {
-      setShowTimePicker(false);
+      setShowTimePicker(false); // Hide picker after selection
     }
   };
 
   const handleReservationConfirm = () => {
     // handle the reservation confirmation here later
     // console.log("Reservation confirmed for:", selectedDate);
-    console.log("Time sent to HomeScreen:", selectedDate);
+    console.log("Time sent to HomeScreen:", selectedTime);
     navigation.navigate("Main", {
       screen: "Home",
-      params: { selectedTime: selectedDate.toISOString() },
+      params: { selectedTime: selectedDate },
     });
   };
   return (
@@ -61,7 +63,7 @@ function TimeScreen({ navigation }) {
       <Text>What time would you like to go eat?</Text>
       {(showTimePicker || Platform.OS === "ios") && (
         <DateTimePicker
-          value={selectedDate}
+          value={selectedDate || new Date()}
           mode="time"
           display="default"
           onChange={handleTimeChange}

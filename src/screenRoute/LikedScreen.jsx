@@ -1,12 +1,22 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
 import { useFocusEffect } from "@react-navigation/native";
+import MapView, { Marker } from "react-native-maps";
+import { Modal } from "react-native";
 
 const LikedScreen = () => {
   const [likedRestaurants, setLikedRestaurants] = useState([]);
+  const [isMapVisible, setIsMapVisible] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   const fetchLikedRestaurants = async () => {
     try {
@@ -57,6 +67,15 @@ const LikedScreen = () => {
   );
   const renderHiddenItem = (data, rowMap) => (
     <View style={styles.rowBack}>
+      {/* Left button (View on Map) */}
+      <TouchableOpacity
+        style={[styles.backLeftBtn, styles.backLeftBtnLeft]}
+        onPress={() => openMapModal(data.item.location)}
+      >
+        <Text style={styles.backTextWhite}>View on Map</Text>
+      </TouchableOpacity>
+
+      {/* Right button (Delete) */}
       <TouchableOpacity
         style={[styles.backRightBtn, styles.backRightBtnRight]}
         onPress={() => {
@@ -72,18 +91,59 @@ const LikedScreen = () => {
       </TouchableOpacity>
     </View>
   );
+  const openMapModal = (location) => {
+    setSelectedLocation(location);
+    setIsMapVisible(true);
+  };
+
   return (
-    <View style={styles.container}>
-      <SwipeListView
-        data={likedRestaurants}
-        renderItem={renderItem}
-        renderHiddenItem={renderHiddenItem}
-        rightOpenValue={-75}
-        previewRowKey={"0"}
-        previewOpenValue={-40}
-        previewOpenDelay={3000}
-      />
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <SwipeListView
+          data={likedRestaurants}
+          renderItem={renderItem}
+          renderHiddenItem={renderHiddenItem}
+          leftOpenValue={75}
+          rightOpenValue={-75}
+          previewRowKey={"0"}
+          previewOpenValue={-40}
+          previewOpenDelay={3000}
+        />
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={isMapVisible}
+          onRequestClose={() => {
+            setIsMapVisible(false);
+          }}
+        >
+          {selectedLocation && (
+            <MapView
+              style={{ flex: 1 }}
+              initialRegion={{
+                latitude: selectedLocation.latitude,
+                longitude: selectedLocation.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
+            >
+              <Marker
+                coordinate={{
+                  latitude: selectedLocation.latitude,
+                  longitude: selectedLocation.longitude,
+                }}
+              />
+            </MapView>
+          )}
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setIsMapVisible(false)}
+          >
+            <Text style={styles.closeButtonText}>Close Map</Text>
+          </TouchableOpacity>
+        </Modal>
+      </View>
+    </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
@@ -106,10 +166,10 @@ const styles = StyleSheet.create({
   },
   rowBack: {
     alignItems: "center",
-    backgroundColor: "red",
+    backgroundColor: "#DDD", // Default background to be neutral
     flex: 1,
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     paddingLeft: 15,
     marginVertical: 8,
     borderRadius: 10,
@@ -121,15 +181,48 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     width: 75,
+    height: "100%", // Adjusted to fill the height
   },
   backRightBtnRight: {
     backgroundColor: "red",
     right: 0,
     borderRadius: 10,
   },
+  backLeftBtn: {
+    alignItems: "center",
+    bottom: 0,
+    justifyContent: "center",
+    position: "absolute",
+    top: 0,
+    width: 75,
+    height: "100%", // Adjusted to fill the height
+    left: 0,
+    borderRadius: 10,
+  },
+  backLeftBtnLeft: {
+    backgroundColor: "green", // Set to green for "View on Map"
+    textAlign: "center",
+  },
   backTextWhite: {
     color: "#FFF",
     fontWeight: "bold",
+    textAlign: "center",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 50,
+    right: 10,
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 10,
+  },
+  closeButtonText: {
+    fontSize: 16,
+    color: "black",
+  },
+  safeArea: {
+    flex: 1,
+    paddingTop: 20,
   },
 });
 

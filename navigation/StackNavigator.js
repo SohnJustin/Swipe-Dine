@@ -3,7 +3,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "../src/screenRoute/LoginScreen";
 import WelcomeScreen from "../src/screenRoute/WelcomeScreen";
 import SignUpScreen from "../src/screenRoute/SignUpScreen";
-import { HandleReservation } from "../src/screenRoute/TimeScreen";
 import TabNavigation from "./TabNavigation";
 import TimeScreen from "../src/screenRoute/TimeScreen";
 
@@ -11,7 +10,10 @@ const Stack = createStackNavigator();
 
 function StackNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Welcome">
+    <Stack.Navigator
+      initialRouteName="Welcome"
+      screenOptions={{ gestureEnabled: false }}
+    >
       <Stack.Screen
         name="Welcome"
         title="Welcome"
@@ -39,7 +41,7 @@ function StackNavigator() {
       <Stack.Screen
         name="Main"
         component={TabNavigation}
-        options={{ headerShown: true }}
+        options={{ headerShown: false, contentStyle: { pddingBottom: 100 } }}
       />
     </Stack.Navigator>
   );
