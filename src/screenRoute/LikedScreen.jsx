@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db, auth } from "../firebase/firebase";
+import { db, auth } from "../../firebase/firebase";
 import { useFocusEffect } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
 import { Modal } from "react-native";
