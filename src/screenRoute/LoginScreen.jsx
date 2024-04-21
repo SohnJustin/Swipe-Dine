@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { auth } from "../firebase/firebase";
+import { auth } from "../../firebase/firebase";
 import {
   getAuth,
   signInWithEmailAndPassword,

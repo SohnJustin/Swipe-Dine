@@ -4,7 +4,7 @@ import {
   doSignInAnonymously,
   doSignUpWithEmail,
   doSignOut,
-} from "../firebase/auth";
+} from "../../firebase/auth";
 
 export const UserContext = createContext();
 

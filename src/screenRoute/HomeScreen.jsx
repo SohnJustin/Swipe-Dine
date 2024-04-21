@@ -17,11 +17,11 @@ import {
   getDocs,
   setDoc,
 } from "firebase/firestore";
-import { db } from "../firebase/firebase";
+import { db } from "../../firebase/firebase";
 // import { YELP_API_KEY } from "@env";
 // import axios from "axios";
 import { useRoute } from "@react-navigation/native";
-import { addLikedRestaurant } from "../firebase/dbOperations";
+import { addLikedRestaurant } from "../../firebase/dbOperations";
 import getRestaurantFromYelp from "../components/getRestaurantfromYelp";
 import { fetchLocation } from "../components/fetchLocation";
 import { useTime } from "../components/timeContext";

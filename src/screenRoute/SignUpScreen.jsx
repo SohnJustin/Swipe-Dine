@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { doSignUpWithEmail } from "../firebase/auth";
+import { doSignUpWithEmail } from "../../firebase/auth";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 function SignUpScreen({ navigation }) {
