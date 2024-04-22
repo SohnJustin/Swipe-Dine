@@ -2,45 +2,65 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
 
 function WelcomeScreen({ navigation }) {
-  return (
-    <View style={styles.container}>
+  return ( // error with this code: <Image source={require('../../assets/appwallpaper.png')} style={styles.backgroundImage} />
+    
+    <TouchableOpacity
+      onPress={() => navigation.navigate('Login')}
+      activeOpacity={1} // Use 1 to make the opacity effect invisible
+      style={styles.container}
+    >
       <Text style={styles.text}>Welcome to</Text>
       <Text style={styles.title}>Swipe&Dine</Text>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("Login")}
-        activeOpacity={0.7}
-        style={styles.touchableArea}
-      >
-        <Text style={styles.subtitle}>Press here to login!</Text>
-      </TouchableOpacity>
-    </View>
+      <Text style={styles.subtitle}>Press here to login!</Text>
+    </TouchableOpacity>
   );
 }
 const styles = StyleSheet.create({
-  text: {
-    color: "black",
-    fontSize: 20,
-  },
   container: {
     flex: 1,
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingTop: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backgroundImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 25,
+    padding: 20,
+    alignItems: 'center',
   },
   title: {
-    fontSize: 64,
-    marginBottom: 20,
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
   },
   subtitle: {
-    justifyContent: "center",
-    textAlign: "center",
-    fontSize: 24,
-    color: "gray",
-    padding: 20,
-    borderRadius: 10,
-    borderColor: "gray",
-    borderWidth: 1,
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#333',
+    marginBottom: 30,
+  },
+  loginButton: {
+    backgroundColor: '#000',
+    padding: 15,
+    borderRadius: 25,
+    width: '80%',
+    marginBottom: 10,
+  },
+  signupButton: {
+    backgroundColor: '#555',
+    padding: 15,
+    borderRadius: 25,
+    width: '80%',
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
