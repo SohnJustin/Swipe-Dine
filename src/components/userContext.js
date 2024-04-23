@@ -5,10 +5,26 @@ import {
   doSignUpWithEmail,
   doSignOut,
 } from "../../firebase/auth";
+import * as ImagePicker from "expo-image-picker";
 export const UserContext = createContext();
 
 export const useUser = () => useContext(UserContext);
 
+export const pickImageFromLibrary = async () => {
+  const permissionResult =
+    await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  if (permissionResult.granted === false) {
+    alert("You've refused to allow this app to access your photos!");
+    return;
+  }
+
+  const result = await ImagePicker.launchImageLibraryAsync();
+
+  if (!result.cancelled) {
+    return result.uri;
+  }
+};
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState({
     name: "",
@@ -50,43 +66,6 @@ export const UserProvider = ({ children }) => {
   const signOut = async () => {
     await doSignOut();
   };
-
-  const updateUserProfilePicture = async () => {
-    // Let the user pick an image from their gallery
-    const result = await launchImageLibrary({ mediaType: "photo" });
-
-    if (result.didCancel) {
-      console.log("User cancelled image picker");
-    } else if (result.error) {
-      console.log("ImagePicker Error: ", result.error);
-    } else {
-      const imageUri = result.assets[0].uri;
-      // Assuming you have a way to get the current user's ID
-      const userId = getAuth().currentUser.uid;
-      const imageName = `${userId}_${new Date().toISOString()}`;
-      const storageRef = storage().ref(`profilePictures/${imageName}`);
-
-      // Upload the image to Firebase Storage
-      const uploadTask = storageRef.putFile(imageUri);
-
-      try {
-        await uploadTask;
-        // Get the URL to the uploaded image
-        const downloadURL = await storageRef.getDownloadURL();
-
-        // Update the user's profile picture URL
-        await updateProfile(getAuth().currentUser, { photoURL: downloadURL });
-
-        // Update user context or state with the new photo URL
-        setUser((prevUser) => ({
-          ...prevUser,
-          profilePic: { uri: downloadURL },
-        }));
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  };
   return (
     <UserContext.Provider
       value={{
@@ -95,7 +74,6 @@ export const UserProvider = ({ children }) => {
         loginAnonymously,
         signUpWithEmail,
         signOut,
-        updateUserProfilePicture,
       }}
     >
       {children}
