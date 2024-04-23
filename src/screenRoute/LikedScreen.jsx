@@ -12,6 +12,8 @@ import { db, auth } from "../../firebase/firebase";
 import { useFocusEffect } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
 import { Modal } from "react-native";
+import { Linking } from "react-native";
+import { Platform } from "react-native";
 
 const LikedScreen = () => {
   const [likedRestaurants, setLikedRestaurants] = useState([]);
@@ -30,7 +32,13 @@ const LikedScreen = () => {
       );
       const restaurants = [];
       querySnapshot.forEach((doc) => {
-        restaurants.push({ ...doc.data(), id: doc.id }); // Ensuring each item has 'id'
+        const data = doc.data();
+        restaurants.push({
+          ...data,
+          id: doc.id,
+          latitude: data.latitude, // Ensure these names match database fields
+          longitude: data.longitude,
+        });
       });
       setLikedRestaurants(restaurants);
     } catch (error) {
@@ -50,50 +58,90 @@ const LikedScreen = () => {
     }, [fetchLikedRestaurants])
   );
 
-  const renderItem = (data) => (
-    <View style={styles.restaurantBox}>
-      <Text style={styles.name}>{data.item.name || "Name not available"}</Text>
-      <Text style={styles.details}>
-        Categories:{" "}
-        {data.item.categories?.map((cat) => cat.title).join(", ") || "N/A"}
-      </Text>
-      <Text style={styles.details}>
-        Address:{" "}
-        {data.item.location?.address1 ||
-          data.item.address ||
-          "No address found"}
-      </Text>
-    </View>
-  );
-  const renderHiddenItem = (data, rowMap) => (
-    <View style={styles.rowBack}>
-      {/* Left button (View on Map) */}
-      <TouchableOpacity
-        style={[styles.backLeftBtn, styles.backLeftBtnLeft]}
-        onPress={() => openMapModal(data.item.location)}
-      >
-        <Text style={styles.backTextWhite}>View on Map</Text>
-      </TouchableOpacity>
+  const renderItem = (data) => {
+    //console.log("Data in renderItem:", data.item);
+    return (
+      <View style={styles.restaurantBox}>
+        <Text style={styles.name}>
+          {data.item.name || "Name not available"}
+        </Text>
+        <Text style={styles.details}>
+          Categories:{" "}
+          {data.item.categories?.map((cat) => cat.title).join(", ") || "N/A"}
+        </Text>
+        <Text style={styles.details}>
+          Address:{" "}
+          {data.item.location?.address1 ||
+            data.item.address ||
+            "No address found"}
+        </Text>
+      </View>
+    );
+  };
+  const renderHiddenItem = (data, restaurantName) => {
+    //console.log("Data in renderHiddenItem:", data.item);
+    return (
+      <View style={styles.rowBack}>
+        <TouchableOpacity
+          style={[styles.backLeftBtn, styles.backLeftBtnLeft]}
+          onPress={() => {
+            console.log("Location data when button pressed:", data.item);
+            const location = {
+              latitude: data.item.latitude,
+              longitude: data.item.longitude,
+            };
+            const restaurantName = data.item.name;
+            openMap(location, restaurantName);
+          }}
+        >
+          <Text style={styles.backTextWhite}>View on Map</Text>
+        </TouchableOpacity>
 
-      {/* Right button (Delete) */}
-      <TouchableOpacity
-        style={[styles.backRightBtn, styles.backRightBtnRight]}
-        onPress={() => {
-          if (data.item.id) {
-            // Checking if 'id' is available
-            deleteRestaurant(data.item.id);
-          } else {
-            console.error("ID missing in data:", data.item);
-          }
-        }}
-      >
-        <Text style={styles.backTextWhite}>Delete</Text>
-      </TouchableOpacity>
-    </View>
-  );
-  const openMapModal = (location) => {
-    setSelectedLocation(location);
-    setIsMapVisible(true);
+        <TouchableOpacity
+          style={[styles.backRightBtn, styles.backRightBtnRight]}
+          onPress={() => {
+            if (data.item.id) {
+              deleteRestaurant(data.item.id);
+            } else {
+              console.error("ID missing in data:", data.item);
+            }
+          }}
+        >
+          <Text style={styles.backTextWhite}>Delete</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const openMap = (location, restaurantName) => {
+    console.log("Opening map with location:", location);
+    if (
+      !location ||
+      typeof location.latitude !== "number" ||
+      typeof location.longitude !== "number"
+    ) {
+      console.error("Invalid location data:", location);
+      alert("Location data is not available for this restaurant.");
+      return;
+    }
+    const latitude = location.latitude;
+    const longitude = location.longitude;
+    const label = encodeURI(restaurantName);
+
+    const url = Platform.select({
+      ios: `maps:${latitude},${longitude}?q=${label}`,
+      android: `geo:${latitude},${longitude}?q=${label}`,
+    });
+
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(url);
+        } else {
+          console.log("Don't know how to open this URL: " + url);
+        }
+      })
+      .catch((err) => console.error("An error occurred", err));
   };
 
   return (
