@@ -83,6 +83,8 @@ function HomeScreen() {
       yelp_id: likedRestaurant.id,
       image_url: likedRestaurant.image_url,
       is_closed: likedRestaurant.is_closed,
+      longitude: likedRestaurant.coordinates.longitude,
+      latitude: likedRestaurant.coordinates.latitude,
     };
     console.log("Swiped right on: ", likedRestaurant);
     addLikedRestaurant(restaurantData);
