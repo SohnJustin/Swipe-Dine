@@ -38,9 +38,8 @@ const ProfileScreen = () => {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
         <Image
-          source={{ uri: getImageUri() }}
+          source={user.profilePic || defaultProfilePic}
           style={styles.profilePic}
-          defaultSource={defaultProfilePic}
         />
         {editMode ? (
           <View>
