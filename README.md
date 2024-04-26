@@ -6,19 +6,35 @@ Swipe-Dine is a mobile app that helps users discover restaurants in their area a
 
 Before running the app, make sure you have the following dependencies installed on your machine:
 
-- Node.js
+- Node.js (version 18.x.x)
 - npm (Node Package Manager)
 - Expo CLI
 
 ### Installing Node.js and npm
 
-1. To install Node.js, visit the [official Node.js website](https://nodejs.org/) and follow the installation instructions for your operating system.
+1. To install Node.js v18, you must install nvm:
 
-2. npm is included with Node.js installation. Verify that npm is installed by running the following command in your terminal:
+* For macOS/Linux:
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+```
+* For Windows, use `nvm-windows`:
+  ```bash
+  Download and install from https://github.com/coreybutler/nvm-windows
+  ```
 
-    ```bash
-    npm -v
-    ```
+2. Install Node.js v18 using nvm:
+
+   ```bash
+   nvm install 18
+   nvm use 18
+   ```
+3. Verify the Node.js version:
+
+   ```bash
+    node -v
+   ```
+   This should output give `v18.x.x`.
 
 ### Installing Expo CLI
 
