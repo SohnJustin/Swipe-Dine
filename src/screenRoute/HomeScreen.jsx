@@ -28,44 +28,59 @@ import { useTime } from "../components/timeContext";
 
 function HomeScreen() {
   const [restaurants, setRestaurants] = useState([]);
-  const [city, setCity] = useState(``);
+  const [city, setCity] = useState("");
   const { selectedTime } = useTime();
   const route = useRoute();
   const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSearch = async (searchInput) => {
-    const q = query(
-      collection(db, "restaurants"),
-      where("city", "==", searchInput)
-    );
-    const querySnapshot = await getDocs(q);
-    const fetchedRestaurants = [];
-    querySnapshot.forEach((doc) => {
-      fetchedRestaurants.push(doc.data());
-    });
-    setRestaurants(fetchedRestaurants);
-  };
-
+  // const handleSearch = async (searchInput) => {
+  //   const q = query(
+  //     collection(db, "restaurants"),
+  //     where("city", "==", searchInput)
+  //   );
+  //   const querySnapshot = await getDocs(q);
+  //   const fetchedRestaurants = [];
+  //   querySnapshot.forEach((doc) => {
+  //     fetchedRestaurants.push(doc.data());
+  //   });
+  //   setRestaurants(fetchedRestaurants);
+  // };
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const cityFromLocation = await fetchLocation();
-        const restaurants = await getRestaurantFromYelp(
-          cityFromLocation,
-          selectedTime
-        );
-        setRestaurants(restaurants); // Update state with the fetched and filtered restaurants
-        console.log("Restaurants fetched and filtered:", restaurants);
-      } catch (error) {
-        console.error("Error in fetching data: ", error);
-        setErrorMsg("Failed to fetch restaurants");
-        setRestaurants([]);
-      }
+    const getInitialLocation = async () => {
+      const fetchedCity = await fetchLocation();
+      setCity(fetchedCity);
     };
+    getInitialLocation();
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      const restaurants = await getRestaurantFromYelp(city);
+      setRestaurants(restaurants);
+      //console.log("Restaurants fetched:", restaurants);
+    };
+    fetchData();
+  }, [city]);
 
-    console.log("Fetching data triggered by change in selectedTime or city");
-    getData();
-  }, [selectedTime, city]); // Dependency array to trigger re-fetching when these values change
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     try {
+  //       const cityFromLocation = await fetchLocation();
+  //       const restaurants = await getRestaurantFromYelp(
+  //         cityFromLocation,
+  //         selectedTime
+  //       );
+  //       setRestaurants(restaurants); // Update state with the fetched and filtered restaurants
+  //       console.log("Restaurants fetched and filtered:", restaurants);
+  //     } catch (error) {
+  //       console.error("Error in fetching data: ", error);
+  //       setErrorMsg("Failed to fetch restaurants");
+  //       setRestaurants([]);
+  //     }
+  //   };
+
+  //   console.log("Fetching data triggered by change in selectedTime or city");
+  //   getData();
+  // }, [selectedTime, city]); // Dependency array to trigger re-fetching when these values change
 
   // useEffect(() => {
   //   if (city) {
