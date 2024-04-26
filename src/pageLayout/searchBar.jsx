@@ -1,18 +1,17 @@
-import React from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { GOOGLE_PLACES_API_KEY } from "@env";
 import axios from "axios";
-import Entypo from "react-native-vector-icons/Entypo";
-// https://us-central1-swipedine-7e5a2.cloudfunctions.net/fetchDataFromYelp
-const FIREBASE_FUNCTION_URL = `https://us-central1-swipedine-7e5a2.cloudfunctions.net/fetchDataFromYelp`;
+import { FIREBASE_FUNCTION_URL } from "@env";
+import { Entypo, Ionicons } from "@expo/vector-icons";
+import getRestaurantFromYelp from "../components/getRestaurantfromYelp";
+
 export default function SearchBar({ cityHandler }) {
   const fetchData = async (searchInput) => {
     const encodedCity = encodeURIComponent(searchInput);
     const requestUrl = `${FIREBASE_FUNCTION_URL}?city=${encodedCity}`;
-    console.log("Making request to:", requestUrl); // Log the request URL
+    console.log("Making request to:", requestUrl);
+    console.log(`Environment URL: ${process.env.FIREBASE_FUNCTION_URL}`);
 
     try {
       const response = await axios.get(requestUrl);
@@ -20,11 +19,6 @@ export default function SearchBar({ cityHandler }) {
       cityHandler(searchInput); // Pass the original city name to handler
     } catch (error) {
       console.error("Error fetching data:", error);
-      if (response.data) {
-        cityHandler(response.data); // Assuming response.data contains the expected result
-      } else {
-        console.error("No data received from the function");
-      }
       if (error.response) {
         // The request was made and the server responded with a status code that falls out of the range of 2xx
         console.error("Error fetching data:", error.response.data);
@@ -54,6 +48,7 @@ export default function SearchBar({ cityHandler }) {
           if (data && data.description) {
             cityHandler(data.description);
             fetchData(data.description);
+            getRestaurantFromYelp(data.description);
           } else {
             console.error("No description available in selected data");
           }
