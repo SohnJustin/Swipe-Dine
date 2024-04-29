@@ -1,34 +1,35 @@
+import React from "react";
 import { View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { GOOGLE_PLACES_API_KEY } from "@env";
+import { GOOGLE_PLACES_API_KEY, YELP_API_KEY } from "@env";
 import axios from "axios";
-import { FIREBASE_FUNCTION_URL } from "@env";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import getRestaurantFromYelp from "../components/getRestaurantfromYelp";
 
 export default function SearchBar({ cityHandler }) {
-  const fetchData = async (searchInput) => {
+  const fetchDataDirectlyFromYelp = async (searchInput) => {
     const encodedCity = encodeURIComponent(searchInput);
-    const requestUrl = `${FIREBASE_FUNCTION_URL}?city=${encodedCity}`;
-    console.log("Making request to:", requestUrl);
-    console.log(`Environment URL: ${process.env.FIREBASE_FUNCTION_URL}`);
+    const yelpUrl = `https://api.yelp.com/v3/businesses/search?location=${encodedCity}`;
+
+    console.log("Making request to Yelp API:", yelpUrl);
 
     try {
-      const response = await axios.get(requestUrl);
-      console.log("Data received:", response.data);
+      const response = await axios.get(yelpUrl, {
+        headers: {
+          Authorization: `Bearer ${YELP_API_KEY}`,
+        },
+      });
+      console.log("Data received from Yelp:", response.data);
       cityHandler(searchInput); // Pass the original city name to handler
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching data from Yelp:", error);
       if (error.response) {
-        // The request was made and the server responded with a status code that falls out of the range of 2xx
-        console.error("Error fetching data:", error.response.data);
+        console.error("Response Error Data:", error.response.data);
         console.error("Status code:", error.response.status);
         console.error("Headers:", error.response.headers);
       } else if (error.request) {
-        // The request was made but no response was received
         console.error("No response received:", error.request);
       } else {
-        // Something happened in setting up the request that triggered an Error
         console.error("Error setting up request:", error.message);
       }
     }
@@ -47,7 +48,7 @@ export default function SearchBar({ cityHandler }) {
           console.log("Selected data:", data);
           if (data && data.description) {
             cityHandler(data.description);
-            fetchData(data.description);
+            fetchDataDirectlyFromYelp(data.description);
             getRestaurantFromYelp(data.description);
           } else {
             console.error("No description available in selected data");
