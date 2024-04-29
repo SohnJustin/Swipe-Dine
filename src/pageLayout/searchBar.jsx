@@ -1,23 +1,36 @@
-import React from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { GOOGLE_PLACES_API_KEY } from "@env";
 import axios from "axios";
-import Entypo from "react-native-vector-icons/Entypo";
+import { FIREBASE_FUNCTION_URL } from "@env";
+import { Entypo, Ionicons } from "@expo/vector-icons";
+import getRestaurantFromYelp from "../components/getRestaurantfromYelp";
 
-const FIREBASE_FUNCTION_URL = `https://us-central1-swipedine-7e5a2.cloudfunctions.net/fetchDataFromYelp`;
 export default function SearchBar({ cityHandler }) {
   const fetchData = async (searchInput) => {
+    const encodedCity = encodeURIComponent(searchInput);
+    const requestUrl = `${FIREBASE_FUNCTION_URL}?city=${encodedCity}`;
+    console.log("Making request to:", requestUrl);
+    console.log(`Environment URL: ${process.env.FIREBASE_FUNCTION_URL}`);
+
     try {
-      const response = await axios.get(
-        `${FIREBASE_FUNCTION_URL}?city=${encodeURIComponent(searchInput)}`
-      );
-      console.log(response.data);
-      cityHandler(data.description); // Replace with appropriate handling
+      const response = await axios.get(requestUrl);
+      console.log("Data received:", response.data);
+      cityHandler(searchInput); // Pass the original city name to handler
     } catch (error) {
       console.error("Error fetching data:", error);
+      if (error.response) {
+        // The request was made and the server responded with a status code that falls out of the range of 2xx
+        console.error("Error fetching data:", error.response.data);
+        console.error("Status code:", error.response.status);
+        console.error("Headers:", error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("No response received:", error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error setting up request:", error.message);
+      }
     }
   };
 
@@ -31,9 +44,14 @@ export default function SearchBar({ cityHandler }) {
           types: "(cities)",
         }}
         onPress={(data, details = null) => {
-          console.log(data, details);
-          cityHandler(data.description);
-          fetchData(data.description); // Call fetchData with the city name
+          console.log("Selected data:", data);
+          if (data && data.description) {
+            cityHandler(data.description);
+            fetchData(data.description);
+            getRestaurantFromYelp(data.description);
+          } else {
+            console.error("No description available in selected data");
+          }
         }}
         onFail={(error) => console.error(error)}
         styles={{

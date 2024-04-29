@@ -1,63 +1,112 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Dimensions,
+  SafeAreaView,
+} from "react-native";
 import Swiper from "react-native-deck-swiper";
 import SearchBar from "../pageLayout/searchBar";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../firebase/firebase";
-import { YELP_API_KEY } from "@env";
-import axios from "axios";
+import {
+  collection,
+  doc,
+  query,
+  where,
+  getDocs,
+  setDoc,
+} from "firebase/firestore";
+import { db } from "../../firebase/firebase";
+// import { YELP_API_KEY } from "@env";
+// import axios from "axios";
 import { useRoute } from "@react-navigation/native";
+import { addLikedRestaurant } from "../../firebase/dbOperations";
+import getRestaurantFromYelp from "../components/getRestaurantfromYelp";
+import { fetchLocation } from "../components/fetchLocation";
+import { useTime } from "../components/timeContext";
 
 function HomeScreen() {
   const [restaurants, setRestaurants] = useState([]);
-  const [city, setCity] = useState("Fullerton");
+  const [city, setCity] = useState("");
+  const { selectedTime } = useTime();
   const route = useRoute();
-  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const getRestaurantFromYelp = async () => {
-    try {
-      const yelpUrl = `https://api.yelp.com/v3/businesses/search?location=${city}`;
-      const response = await axios.get(yelpUrl, {
-        headers: {
-          Authorization: `Bearer ${YELP_API_KEY}`,
-        },
-      });
-
-      if (response.data && response.data.businesses) {
-        setRestaurants(response.data.businesses);
-      } else {
-        console.error(
-          'Yelp API response does not contain "businesses" property'
-        );
-        setRestaurants([]);
-      }
-    } catch (error) {
-      console.error("Error fetching data from Yelp:", error);
-      setRestaurants([]);
-    }
-  };
-
-  const handleSearch = async (searchInput) => {
-    const q = query(
-      collection(db, "restaurants"),
-      where("city", "==", searchInput)
-    );
-    const querySnapshot = await getDocs(q);
-    const fetchedRestaurants = [];
-    querySnapshot.forEach((doc) => {
-      fetchedRestaurants.push(doc.data());
-    });
-    setRestaurants(fetchedRestaurants);
-  };
-
+  // const handleSearch = async (searchInput) => {
+  //   const q = query(
+  //     collection(db, "restaurants"),
+  //     where("city", "==", searchInput)
+  //   );
+  //   const querySnapshot = await getDocs(q);
+  //   const fetchedRestaurants = [];
+  //   querySnapshot.forEach((doc) => {
+  //     fetchedRestaurants.push(doc.data());
+  //   });
+  //   setRestaurants(fetchedRestaurants);
+  // };
   useEffect(() => {
-    getRestaurantFromYelp();
-    handleSearch(city);
-    if (route.params && route.params.selectedTime) {
-      setSelectedTime(route.params.selectedTime);
-    }
-  }, [city, route.params?.selectedTime]);
+    const getInitialLocation = async () => {
+      const fetchedCity = await fetchLocation();
+      setCity(fetchedCity);
+    };
+    getInitialLocation();
+  }, []);
+  useEffect(() => {
+    if (city) {
+      // Only make the API call if 'city' is not an empty string
+      const fetchData = async () => {
+        const restaurants = await getRestaurantFromYelp(city);
 
+        setRestaurants(restaurants);
+      };
+      fetchData();
+    }
+  }, [city]);
+
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     try {
+  //       const cityFromLocation = await fetchLocation();
+  //       const restaurants = await getRestaurantFromYelp(
+  //         cityFromLocation,
+  //         selectedTime
+  //       );
+  //       setRestaurants(restaurants); // Update state with the fetched and filtered restaurants
+  //       console.log("Restaurants fetched and filtered:", restaurants);
+  //     } catch (error) {
+  //       console.error("Error in fetching data: ", error);
+  //       setErrorMsg("Failed to fetch restaurants");
+  //       setRestaurants([]);
+  //     }
+  //   };
+
+  //   console.log("Fetching data triggered by change in selectedTime or city");
+  //   getData();
+  // }, [selectedTime, city]); // Dependency array to trigger re-fetching when these values change
+
+  // useEffect(() => {
+  //   if (city) {
+  //     getRestaurantFromYelp();
+  //   }
+  // }, [city, selectedTime]);  Only fetch when city or selectedTime changes
+
+  const onSwipedRight = async (cardIndex) => {
+    const likedRestaurant = restaurants[cardIndex];
+    const restaurantData = {
+      name: likedRestaurant.name,
+      rating: likedRestaurant.rating, // Assume 'rating' is available in Yelp's response
+      address: likedRestaurant.location.address1, // Check Yelp's API response structure
+      categories: likedRestaurant.categories,
+      yelp_id: likedRestaurant.id,
+      image_url: likedRestaurant.image_url,
+      is_closed: likedRestaurant.is_closed,
+      longitude: likedRestaurant.coordinates.longitude,
+      latitude: likedRestaurant.coordinates.latitude,
+    };
+    console.log("Swiped right on: ", likedRestaurant);
+    addLikedRestaurant(restaurantData);
+  };
   const renderCard = (restaurant) => {
     if (!restaurant || !restaurant.image_url) {
       return (
@@ -86,33 +135,37 @@ function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchBarContainer}>
-        <SearchBar cityHandler={setCity} />
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.searchBarContainer}>
+          <SearchBar cityHandler={setCity} />
+        </View>
+        <View style={styles.swiperContainer}>
+          {restaurants.length > 0 && (
+            <Swiper
+              cards={restaurants}
+              renderCard={renderCard}
+              onSwiped={(cardIndex) => {
+                console.log(`Swiped card at index ${cardIndex}`);
+              }}
+              onSwipedLeft={(cardIndex) => {
+                console.log("Swiped left!");
+              }}
+              onSwipedRight={onSwipedRight}
+              cardIndex={0}
+              backgroundColor={"transparent"}
+              stackSize={3}
+            />
+          )}
+        </View>
       </View>
-      <View style={styles.swiperContainer}>
-        <Swiper
-          cards={restaurants}
-          renderCard={renderCard}
-          onSwiped={(cardIndex) => {
-            console.log(`Swiped card at index ${cardIndex}`);
-          }}
-          onSwipedLeft={(cardIndex) => {
-            console.log("Swiped left!");
-          }}
-          onSwipedRight={(cardIndex) => {
-            console.log("Swiped right!");
-          }}
-          cardIndex={0}
-          backgroundColor={"transparent"}
-          stackSize={3}
-        />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const { width, height } = Dimensions.get("window");
+
+export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -165,6 +218,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  safeArea: {
+    flex: 1,
+    paddingTop: 20,
+  },
 });
-
-export default HomeScreen;
