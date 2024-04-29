@@ -3,6 +3,7 @@ import { YELP_API_KEY } from "@env";
 
 const getRestaurantFromYelp = async (city) => {
   try {
+    console.log(`Using API Key: ${YELP_API_KEY}`); // Log the API key
     const yelpUrl = `https://api.yelp.com/v3/businesses/search?location=${city}`;
     const response = await axios.get(yelpUrl, {
       headers: {
@@ -23,8 +24,14 @@ const getRestaurantFromYelp = async (city) => {
       return []; // Return empty array if there's an issue with the data
     }
   } catch (error) {
-    console.error("Error fetching data from Yelp:", error);
-    return []; // Return empty array on error
+    if (error.response) {
+      console.error("API Error:", error.response.data);
+      console.error("Status Code:", error.response.status);
+    } else if (error.request) {
+      console.error("No response received", error.request);
+    } else {
+      console.error("Error setting up request:", error.message);
+    }
   }
 };
 

@@ -53,12 +53,15 @@ function HomeScreen() {
     getInitialLocation();
   }, []);
   useEffect(() => {
-    const fetchData = async () => {
-      const restaurants = await getRestaurantFromYelp(city);
-      setRestaurants(restaurants);
-      //console.log("Restaurants fetched:", restaurants);
-    };
-    fetchData();
+    if (city) {
+      // Only make the API call if 'city' is not an empty string
+      const fetchData = async () => {
+        const restaurants = await getRestaurantFromYelp(city);
+
+        setRestaurants(restaurants);
+      };
+      fetchData();
+    }
   }, [city]);
 
   // useEffect(() => {
@@ -138,20 +141,22 @@ function HomeScreen() {
           <SearchBar cityHandler={setCity} />
         </View>
         <View style={styles.swiperContainer}>
-          <Swiper
-            cards={restaurants}
-            renderCard={renderCard}
-            onSwiped={(cardIndex) => {
-              console.log(`Swiped card at index ${cardIndex}`);
-            }}
-            onSwipedLeft={(cardIndex) => {
-              console.log("Swiped left!");
-            }}
-            onSwipedRight={onSwipedRight}
-            cardIndex={0}
-            backgroundColor={"transparent"}
-            stackSize={3}
-          />
+          {restaurants.length > 0 && (
+            <Swiper
+              cards={restaurants}
+              renderCard={renderCard}
+              onSwiped={(cardIndex) => {
+                console.log(`Swiped card at index ${cardIndex}`);
+              }}
+              onSwipedLeft={(cardIndex) => {
+                console.log("Swiped left!");
+              }}
+              onSwipedRight={onSwipedRight}
+              cardIndex={0}
+              backgroundColor={"transparent"}
+              stackSize={3}
+            />
+          )}
         </View>
       </View>
     </SafeAreaView>
