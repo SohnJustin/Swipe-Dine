@@ -100,43 +100,48 @@ function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', 
     alignItems: "center",
-    justifyContent: "flex-start",
-    paddingTop: 60,
+    justifyContent: "center", 
+    padding: 20,
   },
   title: {
-    fontSize: 30,
-    marginBottom: 20,
+    fontSize: 32, 
+    fontWeight: "bold",
+    color: "#333", 
+    marginBottom: 10,
   },
   input: {
     height: 40,
     margin: 12,
     borderWidth: 1,
+    borderColor: "#ccc", 
+    borderRadius: 5, 
     padding: 10,
-
     width: "80%",
+    backgroundColor: "#fff", 
   },
   button: {
     alignItems: "center",
-    backgroundColor: "#000",
-    padding: 10,
+    backgroundColor: "#868cec", // Match the primary button color from WelcomeScreen
+    padding: 15,
     width: "80%",
-    borderRadius: 5,
-    color: "#fff",
+    borderRadius: 25, // Match border radius from WelcomeScreen
     margin: 15,
   },
   buttonText: {
     color: "#fff",
+    fontWeight: "bold", // Ensure bold text for readability
   },
   signUpText: {
     marginTop: 20,
-    color: "#000",
+    color: "#333",
   },
   signUpButton: {
-    color: "#0000FF", // or any color you want for the clickable text
-    fontWeight: "bold", // optional: if you want 'Sign Up' to be bold
+    color: "#0049bb", // Match link colors
+    fontWeight: "bold",
   },
 });
+
 
 export default LoginScreen;

@@ -76,49 +76,47 @@ function TimeScreen({ navigation }) {
   );
 }
 const styles = StyleSheet.create({
-  datePicker: {
-    width: "30%", // Take up full container width
-    justifyContent: "center",
-    alignContent: "center",
-    marginTop: 20,
-
-    // You may adjust the height as needed or leave it to auto scale based on the content
-  },
-  timePicker: {
-    marginTop: 20,
-    width: "20%", // Take up full container width
-    justifyContent: "center",
-    alignContent: "center",
-  },
-  datecontainer: {
-    flex: 0,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "space-around",
-
-    transform: [{ scale: 1.5 }],
-  },
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Consider adding a background image or a subtle gradient if used elsewhere
     alignItems: "center",
-    justifyContent: "flex-start",
-    paddingTop: 60,
+    justifyContent: "center", // Updated to center content vertically and horizontally
+    padding: 20,
   },
   title: {
-    fontSize: 64,
-    marginBottom: 20,
+    fontSize: 32, // Adjusted to match WelcomeScreen
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
   },
-  subtitle: {
+  timePicker: {
+    width: "80%", // Match the width for consistency
     justifyContent: "center",
-    textAlign: "center",
-    fontSize: 24,
-    color: "gray",
-    padding: 20,
-    borderRadius: 10,
-    borderColor: "gray",
+    alignContent: "center",
+    marginTop: 20,
+    borderRadius: 5, // Rounded edges to match other inputs
+    borderColor: "#ccc",
     borderWidth: 1,
   },
+  datePicker: { // If the date picker is used
+    width: "80%",
+    justifyContent: "center",
+    alignContent: "center",
+    marginTop: 20,
+    borderRadius: 5,
+    borderColor: "#ccc",
+    borderWidth: 1,
+  },
+  button: {
+    backgroundColor: "#000", // Primary button color from WelcomeScreen
+    color: "#fff",
+    padding: 15,
+    borderRadius: 25,
+    width: "80%",
+    margin: 15,
+    alignItems: "center",
+  },
 });
+
 
 export default TimeScreen;
