@@ -1,5 +1,6 @@
 import axios from "axios";
 import { YELP_API_KEY } from "@env";
+import { isOpenDuringSelectedTime } from "./restHours";
 
 const getRestaurantFromYelp = async (city) => {
   try {
@@ -34,5 +35,47 @@ const getRestaurantFromYelp = async (city) => {
     }
   }
 };
+// Function to fetch business details by ID
+const getBusinessDetails = async (businessId) => {
+  const url = `https://api.yelp.com/v3/businesses/${businessId}`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${YELP_API_KEY}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching business details:", error);
+    return null;
+  }
+};
 
-export default getRestaurantFromYelp;
+const fetchAndFilterRestaurantsByTime = async (city, selectedTime) => {
+  console.log("Fetching restaurants for:", city, "at time:", selectedTime);
+
+  const validTime =
+    selectedTime instanceof Date ? selectedTime : new Date(selectedTime);
+  const restaurants = await getRestaurantFromYelp(city);
+  const openRestaurants = [];
+
+  for (const restaurant of restaurants) {
+    const details = await getBusinessDetails(restaurant.id);
+    if (details && details.hours) {
+      if (isOpenDuringSelectedTime(details.hours[0].open, validTime)) {
+        openRestaurants.push(restaurant);
+      }
+    }
+  }
+
+  console.log(
+    "Open restaurants:",
+    openRestaurants.map((r) => r.name)
+  );
+  return openRestaurants;
+};
+export {
+  getRestaurantFromYelp,
+  getBusinessDetails,
+  fetchAndFilterRestaurantsByTime,
+};

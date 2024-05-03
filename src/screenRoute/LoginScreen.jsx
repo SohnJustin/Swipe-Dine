@@ -27,7 +27,9 @@ function LoginScreen({ navigation }) {
     try {
       const auth = getAuth();
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate("Time");
+      navigation.navigate("Main", {
+        screen: "Home",
+      });
     } catch (error) {
       let errorMessage = "Failed to log in. Please try again.";
       if (error.code === "auth/invalid-email") {

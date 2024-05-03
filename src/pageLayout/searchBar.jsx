@@ -1,15 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_PLACES_API_KEY, YELP_API_KEY } from "@env";
 import axios from "axios";
 import { Entypo, Ionicons } from "@expo/vector-icons";
-import getRestaurantFromYelp from "../components/getRestaurantfromYelp";
+import {
+  getRestaurantFromYelp,
+  fetchAndFilterRestaurantsByTime,
+} from "../components/getRestaurantfromYelp";
 
 export default function SearchBar({ cityHandler }) {
+  const [input, setInput] = useState("");
   const fetchDataDirectlyFromYelp = async (searchInput) => {
     const encodedCity = encodeURIComponent(searchInput);
     const yelpUrl = `https://api.yelp.com/v3/businesses/search?location=${encodedCity}`;
+    const handleSubmit = () => {
+      cityHandler(input);
+    };
 
     console.log("Making request to Yelp API:", yelpUrl);
 
@@ -38,7 +45,7 @@ export default function SearchBar({ cityHandler }) {
   return (
     <View style={{ marginTop: 15, flexDirection: "row" }}>
       <GooglePlacesAutocomplete
-        placeholder="Search..."
+        placeholder="Enter a city. . ."
         query={{
           key: GOOGLE_PLACES_API_KEY,
           language: "en",
@@ -49,7 +56,7 @@ export default function SearchBar({ cityHandler }) {
           if (data && data.description) {
             cityHandler(data.description);
             fetchDataDirectlyFromYelp(data.description);
-            getRestaurantFromYelp(data.description);
+            fetchAndFilterRestaurantsByTime(data.description);
           } else {
             console.error("No description available in selected data");
           }

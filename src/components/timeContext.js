@@ -7,8 +7,12 @@ export const useTime = () => useContext(TimeContext);
 export const TimeProvider = ({ children }) => {
   const [selectedTime, setSelectedTime] = useState(new Date());
 
+  const setTime = (time) => {
+    setSelectedTime(time);
+  };
+
   return (
-    <TimeContext.Provider value={{ selectedTime, setSelectedTime }}>
+    <TimeContext.Provider value={{ selectedTime, setTime }}>
       {children}
     </TimeContext.Provider>
   );

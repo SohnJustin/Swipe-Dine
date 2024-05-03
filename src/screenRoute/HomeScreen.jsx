@@ -1,173 +1,118 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  Dimensions,
-  SafeAreaView,
-} from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import { View, Text, Image, StyleSheet, SafeAreaView } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import SearchBar from "../pageLayout/searchBar";
-import {
-  collection,
-  doc,
-  query,
-  where,
-  getDocs,
-  setDoc,
-} from "firebase/firestore";
-import { db } from "../../firebase/firebase";
-// import { YELP_API_KEY } from "@env";
-// import axios from "axios";
-import { useRoute } from "@react-navigation/native";
 import { addLikedRestaurant } from "../../firebase/dbOperations";
-import getRestaurantFromYelp from "../components/getRestaurantfromYelp";
+import {
+  fetchAndFilterRestaurantsByTime,
+  getRestaurantFromYelp,
+} from "../components/getRestaurantfromYelp";
 import { fetchLocation } from "../components/fetchLocation";
 import { useTime } from "../components/timeContext";
 
-function HomeScreen() {
+const HomeScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [city, setCity] = useState("");
+  const [useCurrentLocation, setUseCurrentLocation] = useState(true);
   const { selectedTime } = useTime();
-  const route = useRoute();
-  const [errorMsg, setErrorMsg] = useState("");
 
-  // const handleSearch = async (searchInput) => {
-  //   const q = query(
-  //     collection(db, "restaurants"),
-  //     where("city", "==", searchInput)
-  //   );
-  //   const querySnapshot = await getDocs(q);
-  //   const fetchedRestaurants = [];
-  //   querySnapshot.forEach((doc) => {
-  //     fetchedRestaurants.push(doc.data());
-  //   });
-  //   setRestaurants(fetchedRestaurants);
-  // };
   useEffect(() => {
-    const getInitialLocation = async () => {
-      const fetchedCity = await fetchLocation();
-      setCity(fetchedCity);
+    const initialize = async () => {
+      console.log("Initializing HomeScreen...");
+      if (useCurrentLocation) {
+        const fetchedCity = await fetchLocation();
+        console.log("Location fetched:", fetchedCity);
+        setCity(fetchedCity);
+      }
     };
-    getInitialLocation();
-  }, []);
+    initialize();
+  }, [useCurrentLocation]); // Now it only runs if useCurrentLocation changes.
+
   useEffect(() => {
+    console.log("City or time changed:", city, selectedTime);
     if (city) {
-      // Only make the API call if 'city' is not an empty string
-      const fetchData = async () => {
-        const restaurants = await getRestaurantFromYelp(city);
-
-        setRestaurants(restaurants);
-      };
-      fetchData();
+      if (selectedTime) {
+        console.log("Fetching restaurants with time filter...");
+        fetchRestaurants(city, selectedTime);
+        console.log(`Selected City: ${city}, Selected Time: ${selectedTime}`);
+      } else {
+        console.log("Fetching restaurants without time filter...");
+        fetchRestaurants(city);
+        console.log(`Selected City: ${city}`);
+      }
     }
-  }, [city]);
+  }, [city, selectedTime]);
 
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     try {
-  //       const cityFromLocation = await fetchLocation();
-  //       const restaurants = await getRestaurantFromYelp(
-  //         cityFromLocation,
-  //         selectedTime
-  //       );
-  //       setRestaurants(restaurants); // Update state with the fetched and filtered restaurants
-  //       console.log("Restaurants fetched and filtered:", restaurants);
-  //     } catch (error) {
-  //       console.error("Error in fetching data: ", error);
-  //       setErrorMsg("Failed to fetch restaurants");
-  //       setRestaurants([]);
-  //     }
-  //   };
+  const fetchRestaurants = async (searchCity, timeFilter = selectedTime) => {
+    console.log(
+      "Fetching restaurants for:",
+      searchCity,
+      "at time:",
+      timeFilter
+    );
+    try {
+      const results = timeFilter
+        ? await fetchAndFilterRestaurantsByTime(searchCity, timeFilter)
+        : await getRestaurantFromYelp(searchCity);
+      console.log("Restaurants fetched:", results.length);
+      setRestaurants(results);
+    } catch (error) {
+      console.error("Failed to fetch restaurants:", error);
+    }
+  };
 
-  //   console.log("Fetching data triggered by change in selectedTime or city");
-  //   getData();
-  // }, [selectedTime, city]); // Dependency array to trigger re-fetching when these values change
-
-  // useEffect(() => {
-  //   if (city) {
-  //     getRestaurantFromYelp();
-  //   }
-  // }, [city, selectedTime]);  Only fetch when city or selectedTime changes
-
+  const handleCityChange = (newCity) => {
+    console.log("City changed via the searchbar to:", newCity);
+    setUseCurrentLocation(false);
+    setCity(newCity);
+  };
   const onSwipedRight = async (cardIndex) => {
     const likedRestaurant = restaurants[cardIndex];
-    const restaurantData = {
-      name: likedRestaurant.name,
-      rating: likedRestaurant.rating, // Assume 'rating' is available in Yelp's response
-      address: likedRestaurant.location.address1, // Check Yelp's API response structure
-      categories: likedRestaurant.categories,
-      yelp_id: likedRestaurant.id,
-      image_url: likedRestaurant.image_url,
-      is_closed: likedRestaurant.is_closed,
-      longitude: likedRestaurant.coordinates.longitude,
-      latitude: likedRestaurant.coordinates.latitude,
-    };
+    // Assuming additional details are handled here
     console.log("Swiped right on: ", likedRestaurant);
-    addLikedRestaurant(restaurantData);
+    addLikedRestaurant(likedRestaurant);
   };
-  const renderCard = (restaurant) => {
-    if (!restaurant || !restaurant.image_url) {
-      return (
-        <View style={styles.card}>
-          <Text>No Image Available</Text>
-        </View>
-      );
-    }
-    const categories = restaurant.categories.map((category) => category.title);
-    return (
-      <View style={styles.card}>
-        <Text>Selected Time: {selectedTime.toString()}</Text>
-        <Image source={{ uri: restaurant.image_url }} style={styles.image} />
-        <View style={styles.textWrapper}>
-          <Text style={styles.text}>{restaurant.name}</Text>
-          <Text style={styles.subtitle}>
-            Rating: {restaurant.rating} ({restaurant.reviews} reviews)
-          </Text>
-          <Text style={styles.subtitle}>Price: {restaurant.price}</Text>
-          <Text style={styles.subtitle}>
-            Categories: {categories.join(", ")}
-          </Text>
-        </View>
+
+  const renderCard = (restaurant) => (
+    <View style={styles.card}>
+      <Image source={{ uri: restaurant.image_url }} style={styles.image} />
+      <View style={styles.textWrapper}>
+        <Text style={styles.text}>{restaurant.name}</Text>
+        <Text style={styles.subtitle}>
+          Rating: {restaurant.rating} ({restaurant.reviews} reviews)
+        </Text>
+        <Text style={styles.subtitle}>Price: {restaurant.price}</Text>
+        <Text style={styles.subtitle}>
+          Categories: {restaurant.categories.map((c) => c.title).join(", ")}
+        </Text>
       </View>
-    );
-  };
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.searchBarContainer}>
-          <SearchBar cityHandler={setCity} />
+          <SearchBar cityHandler={handleCityChange} />
         </View>
         <View style={styles.swiperContainer}>
-          {restaurants.length > 0 && (
+          {restaurants.length > 0 ? (
             <Swiper
               cards={restaurants}
               renderCard={renderCard}
-              onSwiped={(cardIndex) => {
-                console.log(`Swiped card at index ${cardIndex}`);
-              }}
-              onSwipedLeft={(cardIndex) => {
-                console.log("Swiped left!");
-              }}
               onSwipedRight={onSwipedRight}
-              cardIndex={0}
-              backgroundColor={"transparent"}
               stackSize={3}
             />
+          ) : (
+            <Text>No open restaurants found at the selected time.</Text>
           )}
         </View>
       </View>
     </SafeAreaView>
   );
-}
+};
 
-const { width, height } = Dimensions.get("window");
-
-export default HomeScreen;
-
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f8f8f8",
@@ -223,3 +168,4 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
 });
+export default HomeScreen;
