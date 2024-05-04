@@ -1,126 +1,80 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
+import { View, Text, Button, StyleSheet } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Platform } from "react-native";
-import { useTime } from "../components/timeContext";
+import { useNavigation } from "@react-navigation/native";
+import { useTime } from "../components/timeContext"; // Assuming this context exists
 
-function TimeScreen({ navigation }) {
-  const { selectedDate, setSelectedDate } = useTime();
-  const { selectedTime, setSelectedTime } = useTime();
+const TimeScreen = () => {
+  const [date, setDate] = useState(new Date());
+  const navigation = useNavigation();
+  const { setTime } = useTime(); // Ensure this function is implemented in your context
 
-  const [showDatePicker, setShowDatePicker] = useState(Platform.OS === "ios");
-  const [showTimePicker, setShowTimePicker] = useState(Platform.OS === "ios");
-
-  // save for if we ever use reservation date
-
-  // const handleDateChange = (event, newDate) => {
-  //   const currentDate = newDate || selectedDate;
-  //   setSelectedDate(currentDate);
-  //   if (Platform.OS === "android") {
-  //     setShowDatePicker(false);
-  //   }
-  //};
-
-  const handleTimeChange = (event, newTime) => {
-    const currentTime = newTime || selectedTime;
-    setSelectedTime(currentTime); // Set new time
-    if (Platform.OS === "android") {
-      setShowTimePicker(false); // Hide picker after selection
+  const handleDateChange = (event, selectedDate) => {
+    if (selectedDate) {
+      setDate(new Date(selectedDate)); // Update the date/time state
     }
   };
 
-  const handleReservationConfirm = () => {
-    // handle the reservation confirmation here later
-    // console.log("Reservation confirmed for:", selectedDate);
-    console.log("Time sent to HomeScreen:", selectedTime);
-    navigation.navigate("Main", {
-      screen: "Home",
-      params: { selectedTime: selectedDate },
-    });
+  const handleTimeChange = (event, selectedTime) => {
+    if (selectedTime) {
+      const newDateTime = new Date(date);
+      newDateTime.setHours(selectedTime.getHours());
+      newDateTime.setMinutes(selectedTime.getMinutes());
+      setDate(newDateTime); // Set the new time while preserving the previously selected date
+    }
   };
+
+  const handleConfirm = () => {
+    setTime(date); // Update the context or state with the selected date/time
+    console.log("Date and Time confirmed:", date);
+    navigation.goBack(); // Navigate back or to the desired screen
+  };
+
   return (
     <View style={styles.container}>
-      {/*
-        save if we ever use reservation date
-
-
-      {Platform.OS === "android" && (
-        <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
-      )} */}
-      {/* 
-      {(showDatePicker || Platform.OS === "ios") && (
-        <DateTimePicker
-          style={styles.datePicker}
-          value={selectedDate}
-          mode="date"
-          display="default"
-          onChange={handleDateChange}
-        />
-      )} */}
-      {Platform.OS === "android" && (
-        <Button title="Select Time" onPress={() => setShowTimePicker(true)} />
-      )}
-      <Text>What time would you like to go eat?</Text>
-      {(showTimePicker || Platform.OS === "ios") && (
-        <DateTimePicker
-          value={selectedDate || new Date()}
-          mode="time"
-          display="default"
-          onChange={handleTimeChange}
-          style={styles.timePicker}
-        />
-      )}
+      <Text style={styles.title}>Set your preferred date and time:</Text>
+      <DateTimePicker
+        testID="dateTimePickerDate"
+        value={date}
+        mode="date"
+        is24Hour={true}
+        display="default"
+        onChange={handleDateChange}
+        style={styles.picker}
+      />
+      <DateTimePicker
+        testID="dateTimePickerTime"
+        value={date}
+        mode="time"
+        is24Hour={true}
+        display="default"
+        onChange={handleTimeChange}
+        style={styles.picker}
+      />
       <Button
-        title="Confirm Time"
-        onPress={handleReservationConfirm}
-        style={styles.datecontainer}
+        title="Confirm Date and Time"
+        onPress={handleConfirm}
+        color="#34C759" // Green color for confirmation
       />
     </View>
   );
-}
+};
+
 const styles = StyleSheet.create({
-  datePicker: {
-    width: "30%", // Take up full container width
-    justifyContent: "center",
-    alignContent: "center",
-    marginTop: 20,
-
-    // You may adjust the height as needed or leave it to auto scale based on the content
-  },
-  timePicker: {
-    marginTop: 20,
-    width: "20%", // Take up full container width
-    justifyContent: "center",
-    alignContent: "center",
-  },
-  datecontainer: {
-    flex: 0,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "space-around",
-
-    transform: [{ scale: 1.5 }],
-  },
   container: {
     flex: 1,
     backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "flex-start",
-    paddingTop: 60,
+    justifyContent: "center",
+    padding: 20,
   },
   title: {
-    fontSize: 64,
+    fontSize: 20,
     marginBottom: 20,
   },
-  subtitle: {
-    justifyContent: "center",
-    textAlign: "center",
-    fontSize: 24,
-    color: "gray",
-    padding: 20,
-    borderRadius: 10,
-    borderColor: "gray",
-    borderWidth: 1,
+  picker: {
+    width: "100%", // Full width for better alignment
+    height: 260,
   },
 });
 

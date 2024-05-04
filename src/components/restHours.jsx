@@ -1,38 +1,47 @@
 /**
- * Checks if a restaurant is open during the selected time.
- * @param {Object[]} operatingHours - An array of operating hours for each day.
- * @param {Date} selectedTime - The time selected by the user.
+ * Checks if a restaurant is open based on the operating hours and a specific time.
+ * @param {Array} operatingHours - An array of operating hours for each day.
+ * @param {Date} selectedTime - The time and date selected by the user.
  * @returns {boolean} - True if the restaurant is open at the selected time, false otherwise.
  */
-// Updated function to check if a restaurant is open during the selected time
-export function isOpenDuringSelectedTime(operatingHours, selectedTime) {
-  console.log(
-    "Operating hours:",
-    operatingHours,
-    "Selected Time:",
-    selectedTime
-  );
-  if (!operatingHours) return false; // Immediately return false if operatingHours is undefined
+const isOpenDuringSelectedTime = (operatingHours, selectedTime) => {
+  if (!operatingHours) {
+    console.error("Operating hours data is missing");
+    return false;
+  }
 
-  const dayOfWeek = selectedTime.getDay(); // Get day index (0 = Sunday, 1 = Monday, ...)
-  const hoursToday = operatingHours[dayOfWeek]; // Get operating hours for today
+  // Debug: Log operating hours to check their structure
+  console.log("Operating Hours:", operatingHours);
 
-  if (!hoursToday) return false; // Closed today or data missing
+  const dayOfWeek = selectedTime.getDay();
+  const hoursToday = operatingHours.find((hour) => hour.day === dayOfWeek);
 
-  // Convert selectedTime to minutes from start of the day
-  const minutesFromMidnight =
+  if (!hoursToday) {
+    console.log(`No operating hours for day ${dayOfWeek}`);
+    return false;
+  }
+
+  // Debug: Log found hours for the day
+  console.log(`Hours today for day ${dayOfWeek}:`, hoursToday);
+
+  const selectedMinutes =
     selectedTime.getHours() * 60 + selectedTime.getMinutes();
+  const openMinutes =
+    parseInt(hoursToday.start.substr(0, 2)) * 60 +
+    parseInt(hoursToday.start.substr(2));
+  const closeMinutes =
+    parseInt(hoursToday.end.substr(0, 2)) * 60 +
+    parseInt(hoursToday.end.substr(2));
 
-  // Assuming hoursToday is something like { open: "11:00", close: "22:00" }
-  const openingTime =
-    parseInt(hoursToday.open.split(":")[0]) * 60 +
-    parseInt(hoursToday.open.split(":")[1]);
-  const closingTime =
-    parseInt(hoursToday.close.split(":")[0]) * 60 +
-    parseInt(hoursToday.close.split(":")[1]);
-
-  // Check if current time is within operating hours
-  return (
-    minutesFromMidnight >= openingTime && minutesFromMidnight <= closingTime
+  // Debug: Log the time comparison details
+  console.log(
+    `Selected Time in minutes: ${selectedMinutes}, Open Time: ${openMinutes}, Close Time: ${closeMinutes}`
   );
-}
+
+  const isOpen =
+    selectedMinutes >= openMinutes && selectedMinutes < closeMinutes;
+  console.log(`Is open: ${isOpen}`);
+  return isOpen;
+};
+
+export { isOpenDuringSelectedTime };
