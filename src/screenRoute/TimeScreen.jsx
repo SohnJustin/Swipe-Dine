@@ -63,18 +63,43 @@ const TimeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', 
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center", 
     padding: 20,
   },
   title: {
-    fontSize: 20,
-    marginBottom: 20,
+    fontSize: 32, 
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
   },
-  picker: {
-    width: "100%", // Full width for better alignment
-    height: 260,
+  timePicker: {
+    width: "80%", 
+    justifyContent: "center",
+    alignContent: "center",
+    marginTop: 20,
+    borderRadius: 5,
+    borderColor: "#ccc",
+    borderWidth: 1,
+  },
+  datePicker: { 
+    width: "80%",
+    justifyContent: "center",
+    alignContent: "center",
+    marginTop: 20,
+    borderRadius: 5,
+    borderColor: "#ccc",
+    borderWidth: 1,
+  },
+  button: {
+    backgroundColor: "#000", 
+    color: "#fff",
+    padding: 15,
+    borderRadius: 25,
+    width: "80%",
+    margin: 15,
+    alignItems: "center",
   },
 });
 
