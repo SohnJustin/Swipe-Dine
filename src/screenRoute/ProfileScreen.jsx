@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: "#4e9af1", // A pleasant blue for buttons
+    backgroundColor: "#868cec", // A pleasant blue for buttons
     color: "#ffffff",
     paddingVertical: 10,
     paddingHorizontal: 20,
