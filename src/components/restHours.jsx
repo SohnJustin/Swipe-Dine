@@ -1,28 +1,32 @@
 /**
  * Checks if a restaurant is open based on the operating hours and a specific time.
  * @param {Array} operatingHours - An array of operating hours for each day.
- * @param {Date} selectedTime - The time and date selected by the user.
+ * @param {Date} selectedTime - The time selected by the user.
  * @returns {boolean} - True if the restaurant is open at the selected time, false otherwise.
  */
-const isOpenDuringSelectedTime = (operatingHours, selectedTime) => {
-  if (!operatingHours) {
-    console.error("Operating hours data is missing");
+export const isOpenDuringSelectedTime = (operatingHours, selectedTime) => {
+  if (
+    !operatingHours ||
+    !selectedTime ||
+    !(selectedTime instanceof Date) ||
+    isNaN(selectedTime.getTime())
+  ) {
+    console.error("Invalid operating hours or selectedTime", {
+      operatingHours,
+      selectedTime,
+    });
     return false;
   }
 
-  // Debug: Log operating hours to check their structure
-  console.log("Operating Hours:", operatingHours);
-
   const dayOfWeek = selectedTime.getDay();
+  console.log("Using selectedTime:", selectedTime);
+
   const hoursToday = operatingHours.find((hour) => hour.day === dayOfWeek);
 
   if (!hoursToday) {
-    console.log(`No operating hours for day ${dayOfWeek}`);
+    console.log("No operating hours for day", dayOfWeek);
     return false;
   }
-
-  // Debug: Log found hours for the day
-  console.log(`Hours today for day ${dayOfWeek}:`, hoursToday);
 
   const selectedMinutes =
     selectedTime.getHours() * 60 + selectedTime.getMinutes();
@@ -33,15 +37,5 @@ const isOpenDuringSelectedTime = (operatingHours, selectedTime) => {
     parseInt(hoursToday.end.substr(0, 2)) * 60 +
     parseInt(hoursToday.end.substr(2));
 
-  // Debug: Log the time comparison details
-  console.log(
-    `Selected Time in minutes: ${selectedMinutes}, Open Time: ${openMinutes}, Close Time: ${closeMinutes}`
-  );
-
-  const isOpen =
-    selectedMinutes >= openMinutes && selectedMinutes < closeMinutes;
-  console.log(`Is open: ${isOpen}`);
-  return isOpen;
+  return selectedMinutes >= openMinutes && selectedMinutes < closeMinutes;
 };
-
-export { isOpenDuringSelectedTime };

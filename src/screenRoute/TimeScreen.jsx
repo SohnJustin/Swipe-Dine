@@ -2,19 +2,21 @@ import React, { useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
-import { useTime } from "../components/timeContext"; // Assuming this context exists
+import { useTime } from "../components/timeContext"; // Ensure this context exists
 
 const TimeScreen = () => {
   const [date, setDate] = useState(new Date());
   const navigation = useNavigation();
-  const { setTime } = useTime(); // Ensure this function is implemented in your context
+  const { setTime } = useTime();
 
+  // Function to handle date change
   const handleDateChange = (event, selectedDate) => {
     if (selectedDate) {
       setDate(new Date(selectedDate)); // Update the date/time state
     }
   };
 
+  // Function to handle time change
   const handleTimeChange = (event, selectedTime) => {
     if (selectedTime) {
       const newDateTime = new Date(date);
@@ -24,6 +26,7 @@ const TimeScreen = () => {
     }
   };
 
+  // Function to confirm the date and time
   const handleConfirm = () => {
     setTime(date); // Update the context or state with the selected date/time
     console.log("Date and Time confirmed:", date);
