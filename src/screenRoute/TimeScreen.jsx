@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
 import { useTime } from "../components/timeContext"; // Ensure this context exists
@@ -41,25 +41,28 @@ const TimeScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Set your preferred date and time:</Text>
-      {show}
-      <DateTimePicker
-        testID="dateTimePickerDate"
-        value={date}
-        mode="date"
-        is24Hour={true}
-        display="default"
-        onChange={handleDateChange}
-        style={styles.picker}
-      />
-      <DateTimePicker
-        testID="dateTimePickerTime"
-        value={date}
-        mode="time"
-        is24Hour={true}
-        display="default"
-        onChange={handleTimeChange}
-        style={styles.picker}
-      />
+      {(show || Platform.OS === "ios") && (
+        <DateTimePicker
+          testID="dateTimePickerDate"
+          value={date}
+          mode="date"
+          is24Hour={true}
+          display="default"
+          onChange={handleDateChange}
+          style={styles.picker}
+        />
+      )}
+      {(show || Platform.OS === "ios") && (
+        <DateTimePicker
+          testID="dateTimePickerTime"
+          value={date}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={handleTimeChange}
+          style={styles.picker}
+        />
+      )}
       <Button
         title="Confirm Date and Time"
         onPress={handleConfirm}
