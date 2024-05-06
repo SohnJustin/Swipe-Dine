@@ -24,8 +24,9 @@ const TimeScreen = () => {
       newDateTime.setHours(selectedTime.getHours());
       newDateTime.setMinutes(selectedTime.getMinutes());
       setDate(newDateTime); // Set the new time while preserving the previously selected date
-    } else if (selectedTime && Platform.OS === "android") {
-      setShow(true); // Hide the time picker on Android
+    }
+    if (Platform.OS === "android") {
+      setShow(false); // Hide the picker on Android in the beginning til they click the button to show
     }
   };
 
