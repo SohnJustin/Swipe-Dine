@@ -62,40 +62,46 @@ function SignUpScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', 
     alignItems: "center",
-    justifyContent: "flex-start", // Align items to the start of the container
-    paddingTop: 60,
+    justifyContent: "center", 
+    padding: 20,
   },
   title: {
-    fontSize: 48,
-    paddingBottom: 80,
-    marginBottom: 40,
+    fontSize: 32, 
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
   },
   input: {
     height: 40,
     margin: 12,
     borderWidth: 1,
+    borderColor: "#ccc", 
+    borderRadius: 5,
     padding: 10,
     width: "80%",
+    backgroundColor: "#fff", 
   },
   button: {
     alignItems: "center",
-    backgroundColor: "#000",
-    padding: 10,
+    backgroundColor: "#868cec", 
+    padding: 15,
     width: "80%",
-    borderRadius: 5,
+    borderRadius: 25, 
+    margin: 15,
   },
   buttonText: {
     color: "#fff",
+    fontWeight: "bold", 
   },
   signUpText: {
     marginTop: 20,
-    color: "#000",
+    color: "#333",
   },
   signUpButton: {
-    color: "#0000FF", // or any color you want for the clickable text
-    fontWeight: "bold", // optional: if you want 'Sign Up' to be bold
+    color: "#0049bb", 
+    fontWeight: "bold",
   },
 });
 
