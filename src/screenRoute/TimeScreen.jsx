@@ -14,8 +14,6 @@ const TimeScreen = () => {
   const handleDateChange = (event, selectedDate) => {
     if (selectedDate) {
       setDate(new Date(selectedDate)); // Update the date/time state
-    } else if (Platform.OS === "android") {
-      setShow(false); // Hide the date picker on Android
     }
   };
 
@@ -26,8 +24,8 @@ const TimeScreen = () => {
       newDateTime.setHours(selectedTime.getHours());
       newDateTime.setMinutes(selectedTime.getMinutes());
       setDate(newDateTime); // Set the new time while preserving the previously selected date
-    } else if (Platform.OS === "android") {
-      setShow(false); // Hide the time picker on Android
+    } else if (selectedTime && Platform.OS === "android") {
+      setShow(true); // Hide the time picker on Android
     }
   };
 
@@ -41,6 +39,9 @@ const TimeScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Set your preferred date and time:</Text>
+      {Platform.OS === "android" && (
+        <Button title="Select Time" onPress={() => setShow(true)} />
+      )}
       {(show || Platform.OS === "ios") && (
         <DateTimePicker
           testID="dateTimePickerDate"
