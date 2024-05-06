@@ -8,11 +8,14 @@ const TimeScreen = () => {
   const [date, setDate] = useState(new Date());
   const navigation = useNavigation();
   const { setTime } = useTime();
+  const [show, setShow] = useState(Platform.OS === "ios");
 
   // Function to handle date change
   const handleDateChange = (event, selectedDate) => {
     if (selectedDate) {
       setDate(new Date(selectedDate)); // Update the date/time state
+    } else if (Platform.OS === "android") {
+      setShow(false); // Hide the date picker on Android
     }
   };
 
@@ -23,6 +26,8 @@ const TimeScreen = () => {
       newDateTime.setHours(selectedTime.getHours());
       newDateTime.setMinutes(selectedTime.getMinutes());
       setDate(newDateTime); // Set the new time while preserving the previously selected date
+    } else if (Platform.OS === "android") {
+      setShow(false); // Hide the time picker on Android
     }
   };
 
@@ -36,6 +41,7 @@ const TimeScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Set your preferred date and time:</Text>
+      {show}
       <DateTimePicker
         testID="dateTimePickerDate"
         value={date}
@@ -66,19 +72,19 @@ const TimeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', 
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
     alignItems: "center",
-    justifyContent: "center", 
+    justifyContent: "center",
     padding: 20,
   },
   title: {
-    fontSize: 32, 
+    fontSize: 32,
     fontWeight: "bold",
     color: "#333",
     marginBottom: 10,
   },
   timePicker: {
-    width: "80%", 
+    width: "80%",
     justifyContent: "center",
     alignContent: "center",
     marginTop: 20,
@@ -86,7 +92,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderWidth: 1,
   },
-  datePicker: { 
+  datePicker: {
     width: "80%",
     justifyContent: "center",
     alignContent: "center",
@@ -96,7 +102,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   button: {
-    backgroundColor: "#000", 
+    backgroundColor: "#000",
     color: "#fff",
     padding: 15,
     borderRadius: 25,
