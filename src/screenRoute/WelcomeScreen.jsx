@@ -1,20 +1,44 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Button } from "react-native";
 
+
+//Background image
+//const backgroundImage = require('../../assets/Loging')
 function WelcomeScreen({ navigation }) {
-  return ( // error with this code: <Image source={require('../../assets/appwallpaper.png')} style={styles.backgroundImage} />
-    
-    <TouchableOpacity
-      onPress={() => navigation.navigate('Login')}
-      activeOpacity={1} // Use 1 to make the opacity effect invisible
-      style={styles.container}
+  return (
+    <ImageBackground
+      source={require('../../assets/FoodBack.png')} // Adjust path to your image
+      style={styles.backgroundImage}
     >
-      <Text style={styles.text}>Welcome to</Text>
-      <Text style={styles.title}>Swipe&Dine</Text>
-      <Text style={styles.subtitle}>Press here to login!</Text>
-    </TouchableOpacity>
+      <View style={styles.overlay}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Login')}
+          activeOpacity={1} // Use 1 to make the opacity effect invisible
+          style={styles.container}
+        >
+          <Text style={styles.text}>Welcome to</Text>
+          <Text style={styles.title}>Swipe&Dine</Text>
+          <Text style={styles.subtitle}>Press here to login!</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 }
+
+// function WelcomeScreen({ navigation }) {
+//   return ( // error with this code: <Image source={require('../../assets/appwallpaper.png')} style={styles.backgroundImage} />
+
+//     <TouchableOpacity
+//       onPress={() => navigation.navigate('Login')}
+//       activeOpacity={1} // Use 1 to make the opacity effect invisible
+//       style={styles.container}
+//     >
+//       <Text style={styles.text}>Welcome to</Text>
+//       <Text style={styles.title}>Swipe&Dine</Text>
+//       <Text style={styles.subtitle}>Press here to login!</Text>
+//     </TouchableOpacity>
+//   );
+// }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -22,15 +46,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backgroundImage: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
+    flex: 1,
+    resizeMode: 'cover', // Ensures the image covers the entire screen
+    justifyContent: 'center',
   },
   overlay: {
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    borderRadius: 25,
-    padding: 20,
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Adjust transparency as needed
   },
   title: {
     fontSize: 32,

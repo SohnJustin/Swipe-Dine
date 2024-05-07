@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ImageBackground
 } from "react-native";
 import { auth } from "../../firebase/firebase";
 import {
@@ -13,6 +14,10 @@ import {
   signInWithEmailAndPassword,
   doSignInAnonymously,
 } from "firebase/auth";
+
+
+//Background for loging
+const backgroundImage = require('../../assets/LoginBackground.png');
 
 function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -59,47 +64,53 @@ function LoginScreen({ navigation }) {
   };
   //      {userLoggedIn && <Navigate to="/home" replace={true} />}
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Swipe&Dine</Text>
-      <TextInput
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Email"
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
-      <TextInput
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Password"
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        title="Continue as Guest"
-        style={styles.button}
-        onPress={() => handleGuestLogin()}
-      >
-        <Text style={styles.buttonText}>Continue as Guest</Text>
-      </TouchableOpacity>
-      <Text style={styles.signUpText}>
-        Don't have an account?{" "}
-        <Text
-          style={styles.signUpButton}
-          onPress={() => navigation.navigate("SignUp")}
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Swipe&Dine</Text>
+        <TextInput
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Email"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        <TextInput
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Password"
+          secureTextEntry
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          title="Continue as Guest"
+          style={styles.button}
+          onPress={() => handleGuestLogin()}
         >
-          Sign Up
+          <Text style={styles.buttonText}>Continue as Guest</Text>
+        </TouchableOpacity>
+        <Text style={styles.signUpText}>
+          Don't have an account?{" "}
+          <Text
+            style={styles.signUpButton}
+            onPress={() => navigation.navigate("SignUp")}
+          >
+            Sign Up
+          </Text>
         </Text>
-      </Text>
-    </View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', // Makes the image fill the entire background
+  },
   container: {
     flex: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.5)', 
