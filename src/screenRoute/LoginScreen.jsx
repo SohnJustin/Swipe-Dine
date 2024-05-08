@@ -79,6 +79,7 @@ function LoginScreen({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
+      {/*
       <TouchableOpacity
         title="Continue as Guest"
         style={styles.button}
@@ -86,6 +87,7 @@ function LoginScreen({ navigation }) {
       >
         <Text style={styles.buttonText}>Continue as Guest</Text>
       </TouchableOpacity>
+      */}
       <Text style={styles.signUpText}>
         Don't have an account?{" "}
         <Text
@@ -102,45 +104,45 @@ function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', 
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
     alignItems: "center",
-    justifyContent: "center", 
+    justifyContent: "center",
     padding: 20,
   },
   title: {
-    fontSize: 32, 
+    fontSize: 32,
     fontWeight: "bold",
-    color: "#333", 
+    color: "#333",
     marginBottom: 10,
   },
   input: {
     height: 40,
     margin: 12,
     borderWidth: 1,
-    borderColor: "#ccc", 
-    borderRadius: 5, 
+    borderColor: "#ccc",
+    borderRadius: 5,
     padding: 10,
     width: "80%",
-    backgroundColor: "#fff", 
+    backgroundColor: "#fff",
   },
   button: {
     alignItems: "center",
-    backgroundColor: "#868cec", 
+    backgroundColor: "#868cec",
     padding: 15,
     width: "80%",
-    borderRadius: 25, 
+    borderRadius: 25,
     margin: 15,
   },
   buttonText: {
     color: "#fff",
-    fontWeight: "bold", 
+    fontWeight: "bold",
   },
   signUpText: {
     marginTop: 20,
     color: "#333",
   },
   signUpButton: {
-    color: "#0049bb", 
+    color: "#0049bb",
     fontWeight: "bold",
   },
 });
