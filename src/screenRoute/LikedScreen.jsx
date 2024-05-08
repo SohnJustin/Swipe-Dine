@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ImageBackground
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
@@ -14,6 +15,8 @@ import MapView, { Marker } from "react-native-maps";
 import { Modal } from "react-native";
 import { Linking } from "react-native";
 import { Platform } from "react-native";
+
+const backgroundImage = require('../../assets/FoodBack.png');
 
 const LikedScreen = () => {
   const [likedRestaurants, setLikedRestaurants] = useState([]);
@@ -145,6 +148,7 @@ const LikedScreen = () => {
   };
 
   return (
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <SwipeListView
@@ -192,12 +196,16 @@ const LikedScreen = () => {
         </Modal>
       </View>
     </SafeAreaView>
+    </ImageBackground>
   );
 };
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', // Makes the image fill the entire background
+  },
   container: {
     flex: 1,
-    backgroundColor: "#b6c0d0",  // Darker grey
   },
   restaurantBox: {
     backgroundColor: "#def2e5", // Light green

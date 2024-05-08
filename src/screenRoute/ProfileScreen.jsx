@@ -9,6 +9,7 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  ImageBackground 
 } from "react-native";
 import { UserContext } from "../components/userContext"; // Import your user context
 import defaultProfilePic from "../assets/default-profile-picture.jpeg";
@@ -16,6 +17,9 @@ import { getAuth, updateProfile } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
+
+const backgroundImage = require('../../assets/appwallpaper.png');
+
 const ProfileScreen = () => {
   const { user, setUser } = useContext(UserContext);
   const [editMode, setEditMode] = useState(false);
@@ -100,6 +104,7 @@ const ProfileScreen = () => {
 
   // idk why I can't upload a new profile picture without it yelling. I'll just worry about it later.
   return (
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
         <Image source={profilePic} style={styles.profilePic} />
@@ -136,13 +141,18 @@ const ProfileScreen = () => {
         )}
       </ScrollView>
     </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', // Makes the image fill the entire background
+  },
   safeArea: {
     flex: 1,
-    backgroundColor: "#f4f4f8", // Light gray background for a subtle look
+     // Light gray background for a subtle look
   },
   container: {
     flex: 1,
