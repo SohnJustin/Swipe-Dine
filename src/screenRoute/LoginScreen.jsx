@@ -51,18 +51,6 @@ function LoginScreen({ navigation }) {
       Alert.alert("Login Error", errorMessage);
     }
   };
-  const handleGuestLogin = async () => {
-    try {
-      await doSignInAnonymously(auth);
-      alert("Logged in as a guest");
-      navigation.navigate("Time");
-    } catch (error) {
-      console.error(error);
-      alert("Error logging in as a guest");
-      // Handle any errors here
-    }
-  };
-  //      {userLoggedIn && <Navigate to="/home" replace={true} />}
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
@@ -84,13 +72,6 @@ function LoginScreen({ navigation }) {
         />
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          title="Continue as Guest"
-          style={styles.button}
-          onPress={() => handleGuestLogin()}
-        >
-          <Text style={styles.buttonText}>Continue as Guest</Text>
         </TouchableOpacity>
         <Text style={styles.signUpText}>
           Don't have an account?{" "}
