@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ImageBackground
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
@@ -14,6 +15,8 @@ import MapView, { Marker } from "react-native-maps";
 import { Modal } from "react-native";
 import { Linking } from "react-native";
 import { Platform } from "react-native";
+
+const backgroundImage = require('../../assets/FoodBack.png');
 
 const LikedScreen = () => {
   const [likedRestaurants, setLikedRestaurants] = useState([]);
@@ -145,6 +148,7 @@ const LikedScreen = () => {
   };
 
   return (
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <SwipeListView
@@ -192,29 +196,40 @@ const LikedScreen = () => {
         </Modal>
       </View>
     </SafeAreaView>
+    </ImageBackground>
   );
 };
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', // Makes the image fill the entire background
+  },
   container: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
   },
   restaurantBox: {
-    backgroundColor: "white",
+    backgroundColor: "#def2e5", // Light green
     padding: 20,
     marginVertical: 8,
     borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
   name: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#333",  
   },
   details: {
     fontSize: 14,
+    color: "#666",  
   },
   rowBack: {
     alignItems: "center",
-    backgroundColor: "#DDD", // Default background to be neutral
+    backgroundColor: "#DDD",
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -224,32 +239,25 @@ const styles = StyleSheet.create({
   },
   backRightBtn: {
     alignItems: "center",
-    bottom: 0,
     justifyContent: "center",
     position: "absolute",
     top: 0,
     width: 75,
-    height: "100%", // Adjusted to fill the height
-  },
-  backRightBtnRight: {
-    backgroundColor: "red",
+    height: "100%",
     right: 0,
     borderRadius: 10,
+    backgroundColor: "#FF6347",  // Lighter red
   },
   backLeftBtn: {
     alignItems: "center",
-    bottom: 0,
     justifyContent: "center",
     position: "absolute",
     top: 0,
     width: 75,
-    height: "100%", // Adjusted to fill the height
+    height: "100%",
     left: 0,
     borderRadius: 10,
-  },
-  backLeftBtnLeft: {
-    backgroundColor: "green", // Set to green for "View on Map"
-    textAlign: "center",
+    backgroundColor: "#32CD32",  // Vibrant green
   },
   backTextWhite: {
     color: "#FFF",
@@ -263,6 +271,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",  
   },
   closeButtonText: {
     fontSize: 16,

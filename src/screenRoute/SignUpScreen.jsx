@@ -5,9 +5,12 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ImageBackground
 } from "react-native";
 import { doSignUpWithEmail } from "../../firebase/auth";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
+const backgroundImage = require('../../assets/LoginBackground.png');
 
 function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -25,6 +28,7 @@ function SignUpScreen({ navigation }) {
     }
   };
   return (
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
     <View style={styles.container}>
       <Text style={styles.title}>Swipe&Dine</Text>
       <TextInput
@@ -56,10 +60,15 @@ function SignUpScreen({ navigation }) {
         </Text>
       </Text>
     </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', // Makes the image fill the entire background
+  },
   container: {
     flex: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.5)', 
